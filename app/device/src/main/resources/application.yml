@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: recovery
+  profiles:
+    active: dev
+  messages:
+    basename: static/i18n/messages
+
+server:
+  port: 8100
+  servlet:
+    context-path: /recovery

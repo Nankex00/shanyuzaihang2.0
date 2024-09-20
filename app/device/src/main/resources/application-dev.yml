@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/recovery_platform_test?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: wf817628
+    driver-class-name: com.mysql.jdbc.Driver
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 5
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+recovery:
+  signing-secret: 123456
+
+storage:
+  mode: local
+  local:
+    endpoint: http://www.baidu.com
+    root: /Users/tiger/Documents/klarity/storage/
+
+logging:
+  config: classpath:logback.xml
