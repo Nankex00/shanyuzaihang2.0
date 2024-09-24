@@ -78,6 +78,8 @@ public class TokenService
                 //采用Session存储数据对象
                 HttpSession session = request.getSession();
                 if (ObjectUtil.equals(session.getAttribute("userKey"),userKey)){
+                    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+                    loginUser.setExpireTime((Long) session.getAttribute("expireTime"));
                     return (LoginUser) session.getAttribute("loginUser");
                 }else {
                     throw new ServiceException();
