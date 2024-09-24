@@ -1,17 +1,21 @@
-package com.fushuhealth.recovery.device.model.vo;
+package com.fushuhealth.recovery.common.core.domin;
 
-import com.fushuhealth.recovery.common.core.domin.SysUser;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Data
-public class UserDetailVo implements UserDetails {
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoginUser implements UserDetails {
 
-    private Long id;
+    private Long userId;
 
     private Long institutionId;
 
@@ -22,6 +26,25 @@ public class UserDetailVo implements UserDetails {
     private Set<String> permissions;
 
     private SysUser user;
+
+    /**
+     * 登录时间
+     */
+    private Long loginTime;
+
+    /**
+     * 过期时间
+     */
+    private Long expireTime;
+
+    public LoginUser(Long userId, Long institutionId, SysUser user, Set<String> permissions)
+    {
+        this.userId = userId;
+        this.institutionId = institutionId;
+        this.user = user;
+        this.permissions = permissions;
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
