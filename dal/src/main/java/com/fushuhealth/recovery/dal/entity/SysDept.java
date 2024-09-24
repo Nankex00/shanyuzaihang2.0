@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("institution")
-public class Institution extends BaseEntity {
+public class SysDept extends BaseEntity {
     @TableId(type = IdType.AUTO)
     private Long id;
 

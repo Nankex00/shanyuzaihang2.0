@@ -1,29 +1,24 @@
 package com.fushuhealth.recovery.device.core.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import cn.hutool.core.util.ObjectUtil;
 import com.fushuhealth.recovery.common.constant.Constants;
 import com.fushuhealth.recovery.common.constant.SessionConstants;
 import com.fushuhealth.recovery.common.core.domin.LoginUser;
 import com.fushuhealth.recovery.common.exception.ServiceException;
+import com.fushuhealth.recovery.common.util.IdUtils;
 import com.fushuhealth.recovery.common.util.StringUtils;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import com.fushuhealth.recovery.common.util.IdUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
