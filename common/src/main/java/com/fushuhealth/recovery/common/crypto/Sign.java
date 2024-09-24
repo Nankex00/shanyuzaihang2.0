@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fushuhealth.recovery.common.error.ServiceException;
+import com.fushuhealth.recovery.common.exception.ServiceException;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
