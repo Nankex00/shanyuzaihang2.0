@@ -17,4 +17,11 @@ public class MybatisPlusConfig {
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
+
+    /**
+     * 数据权限拦截器
+     */
+//    public PlusDataPermissionInterceptor dataPermissionInterceptor() {
+//        return new PlusDataPermissionInterceptor();
+//    }
 }

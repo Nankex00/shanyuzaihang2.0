@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @TableName user
  */
@@ -32,6 +34,8 @@ public class SysUser extends BaseEntity {
     private SysRole role;
 
     private Long roleId;
+
+    private List<SysRole> roles;
 
     public boolean isAdmin()
     {

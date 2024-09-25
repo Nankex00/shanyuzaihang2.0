@@ -26,5 +26,5 @@ public class BaseEntity implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
-    private Byte delFlag;
+    private Integer delFlag;
 }

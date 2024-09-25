@@ -13,10 +13,10 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName("institution")
+@TableName("sys_dept")
 public class SysDept extends BaseEntity {
-    @TableId(type = IdType.AUTO)
-    private Long id;
+    @TableId
+    private Long deptId;
 
     private String name;
 

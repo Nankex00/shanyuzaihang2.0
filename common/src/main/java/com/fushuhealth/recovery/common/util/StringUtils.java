@@ -20,6 +20,8 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
     /** 下划线 */
     private static final char SEPARATOR = '_';
 
+    public static final String SEPARATORA = ",";
+
     public static String uuid() {
         return UUID.randomUUID().toString().replace("-", "");
     }

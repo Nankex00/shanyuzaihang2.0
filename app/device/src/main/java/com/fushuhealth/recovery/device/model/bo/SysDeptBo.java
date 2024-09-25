@@ -17,7 +17,6 @@ import javax.validation.constraints.NotNull;
 public class SysDeptBo {
 
     private Long id;
-    @NotNull(message = "用户id不能为空")
     private Long userId;
     @NotBlank(message = "机构名称不能为空")
     private String name;
@@ -25,6 +24,9 @@ public class SysDeptBo {
     private String userName;
     @NotBlank(message = "登录密码不能为空")
     private String password;
+    /**
+     * 默认管理员权限为1，市级机构为2，区县级为3，社区级为4
+     */
     @NotNull(message = "机构等级不能为空")
     private Long institutionLevel;
     @NotNull(message = "父机构id不能为空")

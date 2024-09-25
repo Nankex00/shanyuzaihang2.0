@@ -29,6 +29,6 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @param user 用户信息
      * @return 结果
      */
-    @Insert("INSERT INTO sys_user(dept_id, user_name, password, create_by) VALUES (#{deptId}, #{userName}, #{password},#{createBy})")
+    @Insert("INSERT INTO sys_user(user_id,dept_id, user_name, password, create_by) VALUES (#{userId},#{deptId}, #{userName}, #{password},#{createBy})")
     public  int insertUser(SysUser user);
 }

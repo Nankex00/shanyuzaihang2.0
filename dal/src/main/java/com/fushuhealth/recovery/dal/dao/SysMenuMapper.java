@@ -59,7 +59,7 @@ public interface SysMenuMapper {
      * @return 菜单列表
      */
     @Select("select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time" +
-            "from sys_menu m" +
+            " from sys_menu m" +
             " left join sys_role_menu rm on m.menu_id = rm.menu_id" +
             " left join sys_user_role ur on rm.role_id = ur.role_id" +
             " left join sys_role ro on ur.role_id = ro.role_id" +

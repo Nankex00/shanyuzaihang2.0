@@ -1,6 +1,7 @@
 package com.fushuhealth.recovery.device.service;
 
 import com.fushuhealth.recovery.common.core.domin.SysMenu;
+import com.fushuhealth.recovery.dal.vo.NewRouterVo;
 import com.fushuhealth.recovery.dal.vo.RouterVo;
 
 import java.util.List;
@@ -37,12 +38,13 @@ public interface ISysMenuService {
      */
     public List<SysMenu> selectMenuTreeByUserId(Long userId);
 
-    /**
-     * 构建前端路由所需要的菜单
-     *
-     * @param menus 菜单列表
-     * @return 路由列表
-     */
-    public List<RouterVo> buildMenus(List<SysMenu> menus);
+//    /**
+//     * 构建前端路由所需要的菜单
+//     *
+//     * @param menus 菜单列表
+//     * @return 路由列表
+//     */
+//    public List<RouterVo> buildMenus(List<SysMenu> menus);
+    public List<NewRouterVo> buildMenus(List<SysMenu> menus);
 
 }
