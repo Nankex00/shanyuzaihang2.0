@@ -8,8 +8,10 @@ import com.fushuhealth.recovery.common.core.domin.SysMenu;
 import com.fushuhealth.recovery.common.core.domin.SysUser;
 import com.fushuhealth.recovery.device.core.service.SysLoginService;
 import com.fushuhealth.recovery.device.core.service.SysPermissionService;
+import com.fushuhealth.recovery.device.model.response.InfoResponse;
 import com.fushuhealth.recovery.device.service.ISysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,12 +42,10 @@ public class AuthorityController {
     @PostMapping("/login")
     public AjaxResult login(@RequestBody LoginBody loginBody, HttpServletRequest request)
     {
-        AjaxResult ajax = AjaxResult.success();
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid(),request);
-        ajax.put(Constants.TOKEN, token);
-        return ajax;
+        return AjaxResult.success("登录成功",token);
     }
 
     /**
@@ -61,11 +61,8 @@ public class AuthorityController {
         Set<String> roles = permissionService.getRolePermission(user);
         // 权限集合
         Set<String> permissions = permissionService.getMenuPermission(user);
-        AjaxResult ajax = AjaxResult.success();
-        ajax.put("user", user);
-        ajax.put("roles", roles);
-        ajax.put("permissions", permissions);
-        return ajax;
+
+        return AjaxResult.success("获取用户信息成功",new InfoResponse(user,roles,permissions));
     }
 
     /**
@@ -78,7 +75,7 @@ public class AuthorityController {
     {
         Long userId = SecurityUtils.getUserId();
         List<SysMenu> menus = menuService.selectMenuTreeByUserId(userId);
-        return AjaxResult.success(menuService.buildMenus(menus));
+        return AjaxResult.success("获取路由信息成功",menuService.buildMenus(menus));
     }
 
 }

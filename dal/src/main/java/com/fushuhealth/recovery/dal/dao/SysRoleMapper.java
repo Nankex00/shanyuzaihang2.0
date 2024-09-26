@@ -30,4 +30,19 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
             " where r.del_flag = '0' and ur.user_id = #{userId}")
     public List<SysRole> selectRolePermissionByUserId(Long userId);
 
+    /**
+     * 通过角色ID查询角色
+     *
+     * @param roleId 角色ID
+     * @return 角色对象信息
+     */
+    @Select("select distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.menu_check_strictly, r.dept_check_strictly," +
+            "            r.status, r.del_flag, r.create_time, r.remark " +
+            "        from sys_role r" +
+            "        left join sys_user_role ur on ur.role_id = r.role_id" +
+            "        left join sys_user u on u.user_id = ur.user_id" +
+            "        left join sys_dept d on u.dept_id = d.dept_id" +
+            " where r.role_id = #{roleId}")
+    public SysRole selectRoleById(Long roleId);
+
 }

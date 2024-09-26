@@ -7,6 +7,9 @@ import com.fushuhealth.recovery.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Zhuanz
  * @date 2024/9/23
@@ -18,7 +21,7 @@ public class SysDept extends BaseEntity {
     @TableId
     private Long deptId;
 
-    private String name;
+    private String deptName;
 
     private Long institutionLevel;
 
@@ -31,4 +34,7 @@ public class SysDept extends BaseEntity {
     private String doctor;
 
     private String address;
+
+    /** 子部门 */
+//    private List<SysDept> children = new ArrayList<SysDept>();
 }

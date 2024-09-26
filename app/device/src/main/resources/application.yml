@@ -7,6 +7,6 @@ spring:
     basename: static/i18n/messages
 
 server:
-  port: 8100
+  port: 8200
   servlet:
     context-path: /recovery

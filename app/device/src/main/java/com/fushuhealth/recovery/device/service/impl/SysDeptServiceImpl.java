@@ -6,7 +6,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fushuhealth.recovery.common.api.AjaxResult;
+import com.fushuhealth.recovery.common.api.BaseResponse;
 import com.fushuhealth.recovery.common.core.domin.SysUser;
 import com.fushuhealth.recovery.common.exception.ServiceException;
 import com.fushuhealth.recovery.common.util.SecurityUtils;
@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.rowset.serial.SerialException;
 import java.util.List;
 
 /**
@@ -42,13 +41,15 @@ public class SysDeptServiceImpl implements ISysDeptService {
     Snowflake snowflake = new Snowflake();
 
     @Override
-    public List<SysDept> list(InstitutionRequest request) {
+    public BaseResponse<List<SysDept>> list(InstitutionRequest request) {
         Page<SysDept> page = new Page<>(request.getPageNum(),request.getPageSize());
         LambdaQueryWrapper<SysDept> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(ObjectUtil.isNotEmpty(request.getInstitutionName()),SysDept::getName,request.getInstitutionName())
+        lambdaQueryWrapper.like(ObjectUtil.isNotEmpty(request.getInstitutionName()),SysDept::getDeptName,request.getInstitutionName())
                 .eq(ObjectUtil.isNotEmpty(request.getLevel()),SysDept::getInstitutionLevel,request.getLevel());
+        Page<SysDept> sysDeptPage = sysDeptMapper.selectPage(page, lambdaQueryWrapper);
+        //todo:联表查询获取父机构名称
 
-        return sysDeptMapper.selectPage(page,lambdaQueryWrapper).getRecords();
+        return new BaseResponse<>(sysDeptPage.getRecords(),sysDeptPage.getTotal());
     }
 
     @Override
@@ -109,7 +110,7 @@ public class SysDeptServiceImpl implements ISysDeptService {
         //修改机构表
         LambdaUpdateWrapper<SysDept> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.eq(SysDept::getDeptId,bo.getId())
-                .set(SysDept::getName,bo.getName())
+                .set(SysDept::getDeptName,bo.getName())
                 .set(SysDept::getInstitutionLevel,bo.getInstitutionLevel())
                 .set(ObjectUtil.isNotEmpty(bo.getAddress()),SysDept::getAddress,bo.getAddress())
                 .set(ObjectUtil.isNotEmpty(bo.getDoctor()),SysDept::getDoctor,bo.getDoctor())
@@ -135,7 +136,6 @@ public class SysDeptServiceImpl implements ISysDeptService {
         SysUser sysUser = sysUserMapper.selectOne(lambdaQueryWrapper);
         institutionResponse.setUserId(sysUser.getUserId());
         institutionResponse.setName(sysUser.getUserName());
-        institutionResponse.setPassword(sysUser.getPassword());
         return institutionResponse;
     }
 

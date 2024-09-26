@@ -2,10 +2,13 @@ package com.fushuhealth.recovery.device.service.impl;
 
 import com.fushuhealth.recovery.common.constant.Constants;
 import com.fushuhealth.recovery.common.constant.UserConstants;
+import com.fushuhealth.recovery.common.core.domin.SysRole;
+import com.fushuhealth.recovery.common.core.domin.SysUser;
 import com.fushuhealth.recovery.common.util.SecurityUtils;
 import com.fushuhealth.recovery.common.util.StringUtils;
 import com.fushuhealth.recovery.dal.dao.SysMenuMapper;
 import com.fushuhealth.recovery.common.core.domin.SysMenu;
+import com.fushuhealth.recovery.dal.dao.SysRoleMapper;
 import com.fushuhealth.recovery.dal.vo.NewRouterVo;
 import com.fushuhealth.recovery.device.service.ISysMenuService;
 import com.fushuhealth.recovery.dal.vo.MetaVo;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Zhuanz
@@ -25,6 +29,8 @@ public class SysMenuServiceImpl implements ISysMenuService {
 
     @Autowired
     private SysMenuMapper menuMapper;
+    @Autowired
+    private SysRoleMapper roleMapper;
 
     /**
      * 根据角色ID查询权限
@@ -371,4 +377,95 @@ public class SysMenuServiceImpl implements ISysMenuService {
         return StringUtils.replaceEach(path, new String[] { Constants.HTTP, Constants.HTTPS, Constants.WWW, ".", ":" },
                 new String[] { "", "", "", "/", "/" });
     }
+//    /**
+//     * 构建前端所需要下拉树结构
+//     *
+//     * @param menus 菜单列表
+//     * @return 下拉树结构列表
+//     */
+//    @Override
+//    public List<TreeSelect> buildMenuTreeSelect(List<SysMenu> menus)
+//    {
+//        List<SysMenu> menuTrees = buildMenuTree(menus);
+//        return menuTrees.stream().map(TreeSelect::new).collect(Collectors.toList());
+//    }
+
+//    /**
+//     * 构建前端所需要树结构
+//     *
+//     * @param menus 菜单列表
+//     * @return 树结构列表
+//     */
+//    @Override
+//    public List<SysMenu> buildMenuTree(List<SysMenu> menus)
+//    {
+//        List<SysMenu> returnList = new ArrayList<SysMenu>();
+//        List<Long> tempList = menus.stream().map(SysMenu::getMenuId).collect(Collectors.toList());
+//        for (Iterator<SysMenu> iterator = menus.iterator(); iterator.hasNext();)
+//        {
+//            SysMenu menu = (SysMenu) iterator.next();
+//            // 如果是顶级节点, 遍历该父节点的所有子节点
+//            if (!tempList.contains(menu.getParentId()))
+//            {
+//                recursionFn(menus, menu);
+//                returnList.add(menu);
+//            }
+//        }
+//        if (returnList.isEmpty())
+//        {
+//            returnList = menus;
+//        }
+//        return returnList;
+//    }
+//
+
+//
+//    /**
+//     * 根据用户查询系统菜单列表
+//     *
+//     * @param userId 用户ID
+//     * @return 菜单列表
+//     */
+//    @Override
+//    public List<SysMenu> selectMenuList(Long userId)
+//    {
+//        return selectMenuList(new SysMenu(), userId);
+//    }
+
+//    /**
+//     * 查询系统菜单列表
+//     *
+//     * @param menu 菜单信息
+//     * @return 菜单列表
+//     */
+//    @Override
+//    public List<SysMenu> selectMenuList(SysMenu menu, Long userId)
+//    {
+//        List<SysMenu> menuList = null;
+//        // 管理员显示所有菜单信息
+//        if (SysUser.isAdmin(userId))
+//        {
+//            menuList = menuMapper.selectMenuList(menu);
+//        }
+//        else
+//        {
+//            menu.getParams().put("userId", userId);
+//            menuList = menuMapper.selectMenuListByUserId(menu);
+//        }
+//        return menuList;
+//    }
+
+//    /**
+//     * 根据角色ID查询菜单树信息
+//     *
+//     * @param roleId 角色ID
+//     * @return 选中菜单列表
+//     */
+//    @Override
+//    public List<Long> selectMenuListByRoleId(Long roleId)
+//    {
+//        SysRole role = roleMapper.selectRoleById(roleId);
+//        return menuMapper.selectMenuListByRoleId(roleId, role.isMenuCheckStrictly());
+//    }
+
 }

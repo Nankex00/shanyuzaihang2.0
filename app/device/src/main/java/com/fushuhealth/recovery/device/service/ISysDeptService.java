@@ -1,6 +1,6 @@
 package com.fushuhealth.recovery.device.service;
 
-import com.fushuhealth.recovery.common.api.AjaxResult;
+import com.fushuhealth.recovery.common.api.BaseResponse;
 import com.fushuhealth.recovery.dal.entity.SysDept;
 import com.fushuhealth.recovery.device.model.bo.SysDeptBo;
 import com.fushuhealth.recovery.device.model.request.InstitutionRequest;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface ISysDeptService {
 
-    List<SysDept> list(InstitutionRequest request);
+    BaseResponse<List<SysDept>> list(InstitutionRequest request);
 
     int createDept(SysDeptBo bo);
 

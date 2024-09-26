@@ -7,7 +7,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 /**
  * 权限信息
  *
- * @author ruoyi
+ * @author Zhuanz
  */
 public class PermissionContextHolder
 {

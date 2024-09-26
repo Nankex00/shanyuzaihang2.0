@@ -15,7 +15,6 @@ public class InstitutionResponse {
     private Long userId;
     private String name;
     private String userName;
-    private String password;
     private Long institutionLevel;
     private Long parentId;
     private String contactNumber;
