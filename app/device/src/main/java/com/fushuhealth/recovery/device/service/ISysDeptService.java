@@ -5,6 +5,7 @@ import com.fushuhealth.recovery.dal.entity.SysDept;
 import com.fushuhealth.recovery.device.model.bo.SysDeptBo;
 import com.fushuhealth.recovery.device.model.request.InstitutionRequest;
 import com.fushuhealth.recovery.device.model.response.InstitutionResponse;
+import com.fushuhealth.recovery.device.model.response.SysDeptResponse;
 
 import java.util.List;
 
@@ -14,11 +15,11 @@ import java.util.List;
  */
 public interface ISysDeptService {
 
-    BaseResponse<List<SysDept>> list(InstitutionRequest request);
+    BaseResponse<List<SysDeptResponse>> list(InstitutionRequest request);
 
     int createDept(SysDeptBo bo);
 
-    int deleteDept(Long id,Long userId);
+    int deleteDept(Long userId);
 
     int updateDept(SysDeptBo bo);
 

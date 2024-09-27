@@ -1,5 +1,6 @@
 package com.fushuhealth.recovery.device.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.fushuhealth.recovery.common.api.AjaxResult;
 import com.fushuhealth.recovery.common.constant.Constants;
 import com.fushuhealth.recovery.common.core.domin.LoginBody;
@@ -9,6 +10,7 @@ import com.fushuhealth.recovery.common.core.domin.SysUser;
 import com.fushuhealth.recovery.device.core.service.SysLoginService;
 import com.fushuhealth.recovery.device.core.service.SysPermissionService;
 import com.fushuhealth.recovery.device.model.response.InfoResponse;
+import com.fushuhealth.recovery.device.model.vo.SysUserVo;
 import com.fushuhealth.recovery.device.service.ISysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -57,12 +59,13 @@ public class AuthorityController {
     public AjaxResult getInfo()
     {
         SysUser user = SecurityUtils.getLoginUser().getUser();
+        SysUserVo sysUserVo = BeanUtil.copyProperties(user, SysUserVo.class);
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
         // 权限集合
         Set<String> permissions = permissionService.getMenuPermission(user);
 
-        return AjaxResult.success("获取用户信息成功",new InfoResponse(user,roles,permissions));
+        return AjaxResult.success("获取用户信息成功",new InfoResponse(sysUserVo,roles,permissions));
     }
 
     /**

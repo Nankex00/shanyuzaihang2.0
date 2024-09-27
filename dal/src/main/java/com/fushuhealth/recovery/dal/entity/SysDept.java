@@ -1,6 +1,7 @@
 package com.fushuhealth.recovery.dal.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fushuhealth.recovery.common.entity.BaseEntity;
@@ -18,7 +19,7 @@ import java.util.List;
 @Data
 @TableName("sys_dept")
 public class SysDept extends BaseEntity {
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long deptId;
 
     private String deptName;
@@ -36,5 +37,6 @@ public class SysDept extends BaseEntity {
     private String address;
 
     /** 子部门 */
+//    @TableField(exist = false)
 //    private List<SysDept> children = new ArrayList<SysDept>();
 }

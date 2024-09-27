@@ -23,12 +23,12 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     @Select("select user_id, user_name from sys_user where user_name = #{userName} and del_flag = '0' limit 1")
     public SysUser checkUserNameUnique(String userName);
 
-    /**
-     * 新增用户信息
-     *
-     * @param user 用户信息
-     * @return 结果
-     */
-    @Insert("INSERT INTO sys_user(user_id,dept_id, user_name, password, create_by) VALUES (#{userId},#{deptId}, #{userName}, #{password},#{createBy})")
-    public  int insertUser(SysUser user);
+//    /**
+//     * 新增用户信息
+//     *
+//     * @param user 用户信息
+//     * @return 结果
+//     */
+//    @Insert("INSERT INTO sys_user(user_id,dept_id, user_name, password, create_by) VALUES (#{userId},#{deptId}, #{userName}, #{password},#{createBy})")
+//    public  int insertUser(SysUser user);
 }

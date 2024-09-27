@@ -32,4 +32,11 @@ public interface ISysUserService {
      */
     public int insertUser(SysUser user);
 
+    /**
+     * 验证用户是否存在
+     *
+     * @param userName
+     * @return
+     */
+    boolean isUserExist(String userName);
 }

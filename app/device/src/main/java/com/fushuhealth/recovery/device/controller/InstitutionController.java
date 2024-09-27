@@ -6,6 +6,7 @@ import com.fushuhealth.recovery.common.util.SecurityUtils;
 import com.fushuhealth.recovery.device.model.bo.SysDeptBo;
 import com.fushuhealth.recovery.device.model.request.InstitutionRequest;
 import com.fushuhealth.recovery.device.service.ISysDeptService;
+import com.fushuhealth.recovery.device.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +22,9 @@ public class InstitutionController extends BaseController {
     @Autowired
     private ISysDeptService iSysDeptService;
 
+    @Autowired
+    private ISysUserService iSysUserService;
+
     @GetMapping("/list")
     @PreAuthorize("@ss.hasPermi('institution:subordinate:list')")
     public AjaxResult list(@Validated InstitutionRequest request){
@@ -28,32 +32,37 @@ public class InstitutionController extends BaseController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("@ss.hasPermi('institution:subordinate:add')")
+//    @PreAuthorize("@ss.hasPermi('institution:subordinate:add')")
     public AjaxResult add(@Validated @RequestBody SysDeptBo bo){
         return toAjax(iSysDeptService.createDept(bo));
     }
 
     @DeleteMapping("/delete")
-    @PreAuthorize("@ss.hasPermi('institution:subordinate:delete')")
-    public AjaxResult delete(Long id,Long userId){
-        return toAjax(iSysDeptService.deleteDept(id,userId));
+//    @PreAuthorize("@ss.hasPermi('institution:subordinate:delete')")
+    public AjaxResult delete(Long userId){
+        return toAjax(iSysDeptService.deleteDept(userId));
     }
 
     @PutMapping("/edit")
-    @PreAuthorize("@ss.hasPermi('institution:subordinate:edit')")
+//    @PreAuthorize("@ss.hasPermi('institution:subordinate:edit')")
     public AjaxResult update(@Validated @RequestBody SysDeptBo bo){
         return toAjax(iSysDeptService.updateDept(bo));
     }
 
     @GetMapping("/searchDetail")
-    @PreAuthorize("@ss.hasPermi('institution:subordinate:detail')")
+//    @PreAuthorize("@ss.hasPermi('institution:subordinate:detail')")
     public AjaxResult searchDetail(Long id){
         return AjaxResult.success(iSysDeptService.searchDetail(id));
     }
 
     @GetMapping("/searchMyDetail")
-    @PreAuthorize("@ss.hasPermi('institution:info:detail')")
+//    @PreAuthorize("@ss.hasPermi('institution:info:detail')")
     public AjaxResult searchMyDetail(){
         return AjaxResult.success(iSysDeptService.searchDetail(SecurityUtils.getUserId()));
+    }
+
+    @GetMapping("/isUserExist")
+    public AjaxResult isUserExist(String userName){
+        return iSysUserService.isUserExist(userName)?AjaxResult.success("用户名可用"):AjaxResult.error("用户名已存在");
     }
 }

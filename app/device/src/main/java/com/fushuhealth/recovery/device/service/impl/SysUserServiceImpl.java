@@ -13,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Zhuanz
  * @date 2024/9/24
@@ -64,12 +61,23 @@ public class SysUserServiceImpl implements ISysUserService {
     public int insertUser(SysUser user)
     {
         // 新增用户信息
-        int rows = sysUserMapper.insertUser(user);
+        int rows = sysUserMapper.insert(user);
+        user.setUserId(user.getUserId());
         // 新增用户岗位关联
 //        insertUserPost(user);
         // 新增用户与角色管理
         insertUserRole(user);
         return rows;
+    }
+
+    @Override
+    public boolean isUserExist(String userName) {
+        SysUser info = sysUserMapper.checkUserNameUnique(userName);
+        if (StringUtils.isNotNull(info))
+        {
+            return UserConstants.NOT_UNIQUE;
+        }
+        return UserConstants.UNIQUE;
     }
 
     /**

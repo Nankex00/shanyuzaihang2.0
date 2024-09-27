@@ -1,6 +1,7 @@
 package com.fushuhealth.recovery.device.controller;
 
 import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.fushuhealth.recovery.common.api.AjaxResult;
 import com.fushuhealth.recovery.common.api.BaseController;
 import com.fushuhealth.recovery.common.core.domin.SysUser;
@@ -23,7 +24,6 @@ public class SysUserController extends BaseController {
     @Autowired
     private ISysUserService userService;
 
-    Snowflake snowflake = new Snowflake();
 
     @PostMapping("/sysUser/add")
     public AjaxResult add(@Validated @RequestBody SysUser user)
@@ -38,7 +38,7 @@ public class SysUserController extends BaseController {
 //        }
         user.setCreateBy(Long.valueOf(user.getUserName()));
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
-        user.setUserId(snowflake.nextId());
+        user.setUserId(Long.valueOf(IdUtil.simpleUUID().substring(0,9)));
         return toAjax(userService.insertUser(user));
 
     }

@@ -43,6 +43,11 @@
             <version>5.8.32</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.yulichang</groupId>
+            <artifactId>mybatis-plus-join-boot-starter</artifactId>
+            <version>1.4.7</version>
+        </dependency>
 
     </dependencies>
 
