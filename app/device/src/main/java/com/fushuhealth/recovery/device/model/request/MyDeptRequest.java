@@ -1,23 +1,16 @@
-package com.fushuhealth.recovery.device.model.bo;
+package com.fushuhealth.recovery.device.model.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
  * @author Zhuanz
- * @date 2024/9/24
+ * @date 2024/9/29
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class SysDeptBo {
-
-    private Long deptId;
-    private Long userId;
+public class MyDeptRequest {
     @NotBlank(message = "机构名称不能为空")
     private String deptName;
     @NotBlank(message = "登录账号不能为空")

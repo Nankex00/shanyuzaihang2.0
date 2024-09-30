@@ -13,7 +13,8 @@ import javax.validation.constraints.NotNull;
 public class InstitutionResponse {
     private Long deptId;
     private Long userId;
-    private String name;
+    private String deptName;
+    private String parentDeptName;
     private String userName;
     private Long institutionLevel;
     private Long parentId;

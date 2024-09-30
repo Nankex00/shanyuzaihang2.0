@@ -1,23 +1,21 @@
 package com.fushuhealth.recovery.device.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fushuhealth.recovery.common.api.BaseResponse;
+import com.fushuhealth.recovery.common.constant.ServiceConstants;
 import com.fushuhealth.recovery.common.core.domin.SysUser;
 import com.fushuhealth.recovery.common.exception.ServiceException;
-import com.fushuhealth.recovery.common.util.IdUtils;
 import com.fushuhealth.recovery.common.util.SecurityUtils;
 import com.fushuhealth.recovery.dal.dao.SysDeptMapper;
 import com.fushuhealth.recovery.dal.dao.SysUserMapper;
 import com.fushuhealth.recovery.dal.entity.SysDept;
 import com.fushuhealth.recovery.device.model.bo.SysDeptBo;
 import com.fushuhealth.recovery.device.model.request.InstitutionRequest;
+import com.fushuhealth.recovery.device.model.request.MyDeptRequest;
+import com.fushuhealth.recovery.common.constant.Dict;
 import com.fushuhealth.recovery.device.model.response.InstitutionResponse;
 import com.fushuhealth.recovery.device.model.response.SysDeptResponse;
 import com.fushuhealth.recovery.device.service.ISysDeptService;
@@ -27,9 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Zhuanz
@@ -53,7 +49,7 @@ public class SysDeptServiceImpl implements ISysDeptService {
         lambdaQueryWrapper.selectAll(SysDept.class)
                 .selectAs(SysUser::getUserId,SysDeptResponse::getUserId)
                 .like(ObjectUtil.isNotEmpty(request.getInstitutionName()),SysDept::getDeptName,request.getInstitutionName())
-                .eq(ObjectUtil.isNotEmpty(request.getLevel()),SysDept::getInstitutionLevel,request.getLevel())
+                .eq(ObjectUtil.isNotEmpty(request.getType()),SysDept::getInstitutionLevel,request.getType())
                 .leftJoin(SysUser.class,SysUser::getDeptId,SysDept::getDeptId);
         Page<SysDeptResponse> sysDeptPage = sysDeptMapper.selectJoinPage(page, SysDeptResponse.class, lambdaQueryWrapper);
         List<SysDeptResponse> responses = new ArrayList<>();
@@ -83,7 +79,7 @@ public class SysDeptServiceImpl implements ISysDeptService {
         user.setCreateBy(SecurityUtils.getUserId());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         SysDept sysDept = BeanUtil.copyProperties(bo,SysDept.class);
-        sysDept.setDeptName(bo.getName());
+        sysDept.setDeptName(bo.getDeptName());
         //查询对应的父机构数据
         SysDept parentDept = sysDeptMapper.selectById(bo.getParentId());
         if (ObjectUtil.isEmpty(parentDept)){
@@ -115,7 +111,7 @@ public class SysDeptServiceImpl implements ISysDeptService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateDept(SysDeptBo bo) {
-        if (ObjectUtil.isNull(bo.getId())){
+        if (ObjectUtil.isNull(bo.getDeptId())){
             throw new ServiceException("没有传入id，操作失败");
         }
         SysDept sysDept = sysDeptMapper.selectById(bo.getParentId());
@@ -125,8 +121,8 @@ public class SysDeptServiceImpl implements ISysDeptService {
         String ancestors = sysDept.getAncestors()+","+bo.getParentId();
         //修改机构表
         LambdaUpdateWrapper<SysDept> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        lambdaUpdateWrapper.eq(SysDept::getDeptId,bo.getId())
-                .set(SysDept::getDeptName,bo.getName())
+        lambdaUpdateWrapper.eq(SysDept::getDeptId,bo.getDeptId())
+                .set(SysDept::getDeptName,bo.getDeptName())
                 .set(SysDept::getInstitutionLevel,bo.getInstitutionLevel())
                 .set(ObjectUtil.isNotEmpty(bo.getAddress()),SysDept::getAddress,bo.getAddress())
                 .set(ObjectUtil.isNotEmpty(bo.getDoctor()),SysDept::getDoctor,bo.getDoctor())
@@ -135,7 +131,6 @@ public class SysDeptServiceImpl implements ISysDeptService {
                 .set(SysDept::getAncestors,ancestors);
         sysDeptMapper.update(new SysDept(),lambdaUpdateWrapper);
         //修改用户表
-
         LambdaUpdateWrapper<SysUser> lambdaUpdateWrapper1 = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper1.eq(SysUser::getUserId,bo.getUserId())
                 .set(SysUser::getUserName,bo.getUserName())
@@ -144,18 +139,66 @@ public class SysDeptServiceImpl implements ISysDeptService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int editMyInstitution(MyDeptRequest bo) {
+        SysDept sysDept = sysDeptMapper.selectById(bo.getParentId());
+        if (ObjectUtil.isEmpty(sysDept)){
+            throw new ServiceException("没有对应的父机构，操作失败");
+        }
+        String ancestors = sysDept.getAncestors()+","+bo.getParentId();
+        //修改机构表
+        LambdaUpdateWrapper<SysDept> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(SysDept::getDeptId,SecurityUtils.getLoginUser().getInstitutionId())
+                .set(SysDept::getDeptName,bo.getDeptName())
+                .set(SysDept::getInstitutionLevel,bo.getInstitutionLevel())
+                .set(ObjectUtil.isNotEmpty(bo.getAddress()),SysDept::getAddress,bo.getAddress())
+                .set(ObjectUtil.isNotEmpty(bo.getDoctor()),SysDept::getDoctor,bo.getDoctor())
+                .set(SysDept::getParentId,bo.getParentId())
+                .set(ObjectUtil.isNotEmpty(bo.getContactNumber()),SysDept::getContactNumber,bo.getContactNumber())
+                .set(SysDept::getAncestors,ancestors);
+        sysDeptMapper.update(new SysDept(),lambdaUpdateWrapper);
+        //修改用户表
+        LambdaUpdateWrapper<SysUser> lambdaUpdateWrapper1 = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper1.eq(SysUser::getUserId,SecurityUtils.getUserId())
+                .set(SysUser::getUserName,bo.getUserName())
+                .set(SysUser::getPassword,SecurityUtils.encryptPassword(bo.getPassword()));
+        return sysUserMapper.update(new SysUser(),lambdaUpdateWrapper1);
+    }
+    @Override
     public InstitutionResponse searchDetail(Long id) {
-        SysDept sysDept = sysDeptMapper.selectById(id);
+        SysUser sysUser = Optional.ofNullable(sysUserMapper.selectById(id)).orElseThrow(()->new ServiceException("参数异常，不存在对应的用户"));
+        SysDept sysDept = Optional.ofNullable(sysDeptMapper.selectById(sysUser.getDeptId())).orElseThrow(()->new ServiceException("数据异常，不存在对应的机构"));
+        SysDept parentDept = Optional.ofNullable(sysDeptMapper.selectById(sysDept.getParentId())).orElseThrow(()->new ServiceException("数据异常，不存在对应的上级机构"));
         InstitutionResponse institutionResponse = BeanUtil.copyProperties(sysDept, InstitutionResponse.class);
-        LambdaQueryWrapper<SysUser> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(SysUser::getDeptId,id);
-        //todo:限制只有一个账号对应一个机构
-        SysUser sysUser = sysUserMapper.selectOne(lambdaQueryWrapper);
         institutionResponse.setDeptId(id);
         institutionResponse.setUserId(sysUser.getUserId());
         institutionResponse.setUserName(sysUser.getUserName());
+        institutionResponse.setParentDeptName(parentDept.getDeptName());
         return institutionResponse;
     }
 
+    @Override
+    public String selectDeptNameById(Long institutionId) {
+        return Optional.ofNullable(sysDeptMapper.selectById(institutionId)).orElseThrow(() ->
+                new ServiceException("数据异常，不存在对应机构")).getDeptName();
+    }
 
+    @Override
+    public BaseResponse<List<Dict>> searchAncestorsDeptByDeptId(Long deptId) {
+        String ancestors = Optional.ofNullable(sysDeptMapper.selectById(deptId)).orElseThrow(()->new ServiceException("参数错误，不存在对应机构信息")).getAncestors();
+        String[] split = ancestors.split(",");
+        List<Dict> list = new ArrayList<>();
+        Arrays.stream(split).forEach((parentId)->{
+            if (!parentId.equals(ServiceConstants.DEPT_ROOT_ID)){
+                String deptName = Optional.ofNullable(sysDeptMapper.selectById(parentId)).orElseThrow(() -> new ServiceException("数据错误，不存在对应机构信息")).getDeptName();
+                list.add(new Dict(Long.parseLong(parentId),deptName));
+            }
+        });
+        return new BaseResponse<List<Dict>>(list, (long) list.size());
+    }
+
+    @Override
+    public Long selectDeptLevelByDeptId(Long deptId) {
+        return Optional.ofNullable(sysDeptMapper.selectById(deptId)).orElseThrow(() -> new ServiceException("数据异常，没有对应的机构数据")).getInstitutionLevel();
+    }
 }

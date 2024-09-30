@@ -23,9 +23,17 @@ public class Children extends BaseEntity {
     private Long id;
     private String name;
     private String sex;
-    private String dateOfBrith;
+    private String dateOfBirth;
     private Integer age;
-    private String dangerLevel;
+    private Integer gestationalWeeks;
+    private Integer gestationalWeekDay;
+    private Integer brithWight;
+    private String dangerOfChild;
+    private String dangerOfMother;
+    private Byte dangerLevel;
+    private String diagnose;
+    private String telephone;
+    private String identification;
     private String socialName;
-    private String deptName;
+    private String deptId;
 }

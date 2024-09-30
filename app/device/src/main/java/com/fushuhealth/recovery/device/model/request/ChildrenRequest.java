@@ -1,9 +1,11 @@
 package com.fushuhealth.recovery.device.model.request;
 
-import com.fushuhealth.recovery.common.constant.DangerLevelEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * @author Zhuanz
@@ -14,7 +16,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChildrenRequest {
     private String query;
-    private DangerLevelEnum dangerLevel;
+    private Byte type;
+    @NotNull(message = "pageSize不能为空")
     private Integer pageSize;
+    @NotNull(message = "pageNum不能为空")
     private Integer pageNum;
 }

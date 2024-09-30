@@ -39,4 +39,5 @@ public interface ISysUserService {
      * @return
      */
     boolean isUserExist(String userName);
+
 }

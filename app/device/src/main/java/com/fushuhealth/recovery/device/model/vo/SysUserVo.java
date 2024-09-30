@@ -15,5 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class SysUserVo extends SysUser {
-    private String institutionLevel;
+    private Long institutionLevel;
+    private String deptName;
 }

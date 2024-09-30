@@ -11,7 +11,9 @@ import com.fushuhealth.recovery.device.core.service.SysLoginService;
 import com.fushuhealth.recovery.device.core.service.SysPermissionService;
 import com.fushuhealth.recovery.device.model.response.InfoResponse;
 import com.fushuhealth.recovery.device.model.vo.SysUserVo;
+import com.fushuhealth.recovery.device.service.ISysDeptService;
 import com.fushuhealth.recovery.device.service.ISysMenuService;
+import com.fushuhealth.recovery.device.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +36,10 @@ public class AuthorityController {
 
     @Autowired
     private SysPermissionService permissionService;
+
+    @Autowired
+    private ISysDeptService sysDeptService;
+
 
     /**
      * 登录方法
@@ -59,7 +65,10 @@ public class AuthorityController {
     public AjaxResult getInfo()
     {
         SysUser user = SecurityUtils.getLoginUser().getUser();
+
         SysUserVo sysUserVo = BeanUtil.copyProperties(user, SysUserVo.class);
+        sysUserVo.setInstitutionLevel(sysDeptService.selectDeptLevelByDeptId(user.getDeptId()));
+        sysUserVo.setDeptName(sysDeptService.selectDeptNameById(SecurityUtils.getLoginUser().getInstitutionId()));
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
         // 权限集合

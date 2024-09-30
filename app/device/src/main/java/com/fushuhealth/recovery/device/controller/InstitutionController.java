@@ -5,6 +5,7 @@ import com.fushuhealth.recovery.common.api.BaseController;
 import com.fushuhealth.recovery.common.util.SecurityUtils;
 import com.fushuhealth.recovery.device.model.bo.SysDeptBo;
 import com.fushuhealth.recovery.device.model.request.InstitutionRequest;
+import com.fushuhealth.recovery.device.model.request.MyDeptRequest;
 import com.fushuhealth.recovery.device.service.ISysDeptService;
 import com.fushuhealth.recovery.device.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +62,24 @@ public class InstitutionController extends BaseController {
         return AjaxResult.success(iSysDeptService.searchDetail(SecurityUtils.getUserId()));
     }
 
+
     @GetMapping("/isUserExist")
     public AjaxResult isUserExist(String userName){
         return iSysUserService.isUserExist(userName)?AjaxResult.success("用户名可用"):AjaxResult.error("用户名已存在");
+    }
+
+    @GetMapping("/searchAncestorsDept")
+    public AjaxResult searchAncestorsDept(Long deptId){
+        return AjaxResult.success(iSysDeptService.searchAncestorsDeptByDeptId(deptId));
+    }
+
+    /**
+     * 修改本机构信息
+     * @param bo
+     * @return
+     */
+    @PutMapping("/editMyInstitution")
+    public AjaxResult editMyInstitution(@Validated @RequestBody MyDeptRequest bo){
+        return toAjax(iSysDeptService.editMyInstitution(bo));
     }
 }

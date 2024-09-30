@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 public class InstitutionRequest {
     private String InstitutionName;
 
-    private String level;
+    private String type;
 
     @NotNull(message = "pageSize不能为空")
     private Integer pageSize;
