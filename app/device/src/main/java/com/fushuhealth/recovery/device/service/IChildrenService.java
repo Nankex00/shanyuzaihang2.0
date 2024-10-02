@@ -2,6 +2,7 @@ package com.fushuhealth.recovery.device.service;
 
 import com.fushuhealth.recovery.common.api.BaseResponse;
 import com.fushuhealth.recovery.device.model.request.ChildrenRequest;
+import com.fushuhealth.recovery.device.model.request.HighRiskChildrenRequest;
 import com.fushuhealth.recovery.device.model.response.ChildrenDetail;
 import com.fushuhealth.recovery.device.model.response.ChildrenResponse;
 import com.fushuhealth.recovery.device.model.response.SysDeptResponse;
@@ -16,4 +17,6 @@ public interface IChildrenService {
     BaseResponse<List<ChildrenResponse>> searchList(ChildrenRequest request);
 
     ChildrenDetail searchDetail(Long id);
+
+    BaseResponse<List<ChildrenResponse>> searchListHighRisk(HighRiskChildrenRequest request);
 }

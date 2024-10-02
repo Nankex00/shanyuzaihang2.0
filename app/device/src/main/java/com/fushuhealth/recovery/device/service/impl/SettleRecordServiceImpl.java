@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.fushuhealth.recovery.common.api.BaseResponse;
 import com.fushuhealth.recovery.dal.dao.SettleRecordMapper;
 import com.fushuhealth.recovery.dal.entity.SettleRecord;
+import com.fushuhealth.recovery.dal.entity.SysDept;
 import com.fushuhealth.recovery.device.model.response.SettleRecordResponse;
 import com.fushuhealth.recovery.device.service.ISettleRecordService;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
@@ -24,7 +25,10 @@ public class SettleRecordServiceImpl implements ISettleRecordService {
     @Override
     public BaseResponse<List<SettleRecordResponse>> list(Long childId) {
         MPJLambdaWrapper<SettleRecord> lambdaWrapper = new MPJLambdaWrapper<>();
-        lambdaWrapper.eq(SettleRecord::getChildId,childId);
+        lambdaWrapper.selectAll(SettleRecord.class)
+                .selectAs(SysDept::getDeptName,SettleRecordResponse::getOperatedDept)
+                .eq(SettleRecord::getChildId,childId)
+                .leftJoin(SysDept.class,SysDept::getDeptId,SettleRecord::getOperatedId);
         List<SettleRecordResponse> settleRecordResponses = settleRecordMapper.selectJoinList(SettleRecordResponse.class, lambdaWrapper);
         return new BaseResponse<List<SettleRecordResponse>>(settleRecordResponses, (long) settleRecordResponses.size());
     }

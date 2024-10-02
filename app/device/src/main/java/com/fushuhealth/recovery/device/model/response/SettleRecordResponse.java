@@ -17,8 +17,8 @@ import java.util.Date;
 public class SettleRecordResponse {
     @ApiModelProperty(value = "结案记录id")
     private Long id;
-    @ApiModelProperty(value = "操作者id")
-    private Long operatedId;
+    @ApiModelProperty(value = "操作机构")
+    private String operatedDept;
     @ApiModelProperty(value = "高危等级")
     private Byte dangerLevel;
     @ApiModelProperty(value = "结案诊断")

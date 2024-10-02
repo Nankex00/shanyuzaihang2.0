@@ -2,10 +2,7 @@ package com.fushuhealth.recovery.device.controller;
 
 import com.fushuhealth.recovery.common.api.AjaxResult;
 import com.fushuhealth.recovery.common.api.BaseController;
-import com.fushuhealth.recovery.device.model.request.ChildrenRequest;
-import com.fushuhealth.recovery.device.model.request.DangerLevelRequest;
-import com.fushuhealth.recovery.device.model.request.DiagnoseRequest;
-import com.fushuhealth.recovery.device.model.request.TransferRequest;
+import com.fushuhealth.recovery.device.model.request.*;
 import com.fushuhealth.recovery.device.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -107,7 +104,7 @@ public class ChildrenController extends BaseController {
      */
     @ApiOperation(value = "完成结案")
     @PostMapping("/settleComplete")
-    private AjaxResult settleDiagnose(@RequestBody DiagnoseRequest request){
+    private AjaxResult settleDiagnose(@RequestBody SettleRequest request){
         return toAjax(iDiagnoseService.settleDiagnose(request));
     }
 
@@ -128,9 +125,19 @@ public class ChildrenController extends BaseController {
 
     @ApiOperation(value = "新增诊断数据")
     @PostMapping("/addDiagnoseRecord")
-    private AjaxResult addDiagnoseRecord(@RequestBody List<Long> diagnoseDetail){
-        return toAjax(iDiagnoseService.addDiagnoseRecord(diagnoseDetail));
+    private AjaxResult addDiagnoseRecord(@RequestBody @Validated DiagnoseRequest request){
+        return toAjax(iDiagnoseService.addDiagnoseRecord(request));
     }
 
+    @ApiOperation(value = "儿童诊断数据列表")
+    @GetMapping("/diagnose/list")
+    private AjaxResult searchDiagnoseRecordList(@NotNull Long childId){
+        return AjaxResult.success(iDiagnoseRecordService.searchListByChildId(childId));
+    }
 
+    @ApiOperation(value = "高危儿管理列表")
+    @GetMapping("/highRisk/list")
+    private AjaxResult searchListHighRisk(@RequestBody @NotNull() HighRiskChildrenRequest request){
+        return AjaxResult.success(iChildrenService.searchListHighRisk(request));
+    }
 }

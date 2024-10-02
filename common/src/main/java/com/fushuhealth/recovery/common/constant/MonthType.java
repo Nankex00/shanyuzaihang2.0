@@ -3,6 +3,9 @@ package com.fushuhealth.recovery.common.constant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Zhuanz
  * @date 2024/9/29
@@ -31,4 +34,12 @@ public enum MonthType {
         return null; // 如果找不到匹配的type，则返回null或者其他适当的值
     }
 
+    public static List<EnumInfo> generateMonthList() {
+        List<EnumInfo> monthList = new ArrayList<>();
+
+        for (MonthType enumValue : MonthType.values()) {
+            monthList.add(new EnumInfo(enumValue.getType(), enumValue.getMonthAge()));
+        }
+        return monthList;
+    }
 }

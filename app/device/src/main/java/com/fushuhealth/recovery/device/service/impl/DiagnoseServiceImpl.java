@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.fushuhealth.recovery.common.api.BaseResponse;
 import com.fushuhealth.recovery.common.constant.ServiceConstants;
 import com.fushuhealth.recovery.common.exception.ServiceException;
+import com.fushuhealth.recovery.common.util.SecurityUtils;
 import com.fushuhealth.recovery.dal.dao.*;
 import com.fushuhealth.recovery.dal.entity.*;
 import com.fushuhealth.recovery.device.model.request.DiagnoseRequest;
+import com.fushuhealth.recovery.device.model.request.SettleRequest;
 import com.fushuhealth.recovery.device.model.response.DiagnoseResponse;
 import com.fushuhealth.recovery.device.service.IDiagnoseService;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
@@ -59,7 +61,7 @@ public class DiagnoseServiceImpl implements IDiagnoseService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int settleDiagnose(DiagnoseRequest request) {
+    public int settleDiagnose(SettleRequest request) {
         //todo:权限昨晚之后处理这里deptId传入还是通过LoginUser获取的问题
         //对诊断记录进行字符串处理
         StringJoiner joiner = new StringJoiner(",");
@@ -86,7 +88,8 @@ public class DiagnoseServiceImpl implements IDiagnoseService {
         SettleRecord settleRecord = new SettleRecord();
         settleRecord.setDangerLevel(request.getDangerLevel());
         settleRecord.setReason(reason);
-        settleRecord.setOperatedId(request.getDeptId());
+        settleRecord.setOperatedId(SecurityUtils.getUserId());
+        settleRecord.setOperatedTime(new Date());
         settleRecord.setChildId(request.getChildId());
         settleRecordMapper.insert(settleRecord);
         //将儿童转回原机构
@@ -96,7 +99,9 @@ public class DiagnoseServiceImpl implements IDiagnoseService {
                 .last("limit 1");
         TransferRecord transferRecord = transferRecordMapper.selectOne(lambdaQueryWrapper);
         LambdaUpdateWrapper<Children> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        lambdaUpdateWrapper.set(Children::getDeptId,transferRecord.getTransferInstitution());
+        //修改诊断结果
+        lambdaUpdateWrapper.set(Children::getDeptId,transferRecord.getTransferInstitution())
+                .set(Children::getDiagnose,reason);
         return childrenMapper.update(new Children(),lambdaUpdateWrapper);
     }
 
@@ -111,12 +116,20 @@ public class DiagnoseServiceImpl implements IDiagnoseService {
     }
 
     @Override
-    public int addDiagnoseRecord(List<Long> diagnoseDetail) {
-        DiagnoseRecord diagnoseRecord = new DiagnoseRecord();
-//        diagnoseRecord.setChildId();
-//        diagnoseRecord.setDiagnoseDetail();
-//        diagnoseRecord.set
-        return 0;
+    public int addDiagnoseRecord(DiagnoseRequest request) {
+        DiagnoseRecord diagnoseRecord = BeanUtil.copyProperties(request, DiagnoseRecord.class);
+        diagnoseRecord.setOperatedTime(new Date());
+        diagnoseRecord.setOperatedId(SecurityUtils.getLoginUser().getInstitutionId());
+        StringJoiner joiner = new StringJoiner(",");
+        request.getDiagnoseDetail().forEach(diagnose->{
+            String categoryName = Optional.ofNullable(diagnoseMapper.selectById(diagnose)).orElseThrow(() -> new ServiceException("数据异常，不存在对应的信息")).getCategoryName();
+            joiner.add(categoryName);
+        });
+        LambdaUpdateWrapper<Children> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        String reason = joiner.toString();
+        lambdaUpdateWrapper.set(Children::getDiagnose,reason);
+        childrenMapper.update(new Children(),lambdaUpdateWrapper);
+        return diagnoseRecordMapper.insert(diagnoseRecord);
     }
 
 

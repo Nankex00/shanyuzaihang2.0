@@ -3,6 +3,8 @@ package com.fushuhealth.recovery.device.model.response;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * @author Zhuanz
  * @date 2024/9/27
@@ -17,6 +19,7 @@ public class ChildrenDetail extends ChildrenResponse{
     private String dangerOfChild;
     private String dangerOfMother;
     private String diagnose;
+    private List<Long> diagnoseList;
     private String telephone;
     private String identification;
 }

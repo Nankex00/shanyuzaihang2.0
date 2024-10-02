@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
-    @Select("SELECT  user_id,user_name,dept_id,password,salt_key,enable,status,create_by,create_time,update_by,update_time,del_flag  FROM sys_user WHERE (user_name = #{userName})")
+    @Select("SELECT  user_id,user_name,dept_id,password,enable,status,create_by,create_time,update_by,update_time,del_flag  FROM sys_user WHERE (user_name = #{userName})")
     public SysUser selectUserByUserName(String userName);
 
     /**

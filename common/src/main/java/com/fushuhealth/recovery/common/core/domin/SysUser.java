@@ -31,8 +31,6 @@ public class SysUser extends BaseEntity {
 
     private String password;
 
-    private String saltKey;
-
     private Byte enable;
 
     private String status;
