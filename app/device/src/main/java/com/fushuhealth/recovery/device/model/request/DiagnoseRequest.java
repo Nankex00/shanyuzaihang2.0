@@ -13,9 +13,7 @@ import java.util.List;
  */
 @Data
 public class DiagnoseRequest {
-    @TableField(typeHandler = JacksonTypeHandler.class)
     private List<Long> beforeDiagnose;
-    @TableField(typeHandler = JacksonTypeHandler.class)
     private List<Long> diagnoseDetail;
     private Long childId;
 }

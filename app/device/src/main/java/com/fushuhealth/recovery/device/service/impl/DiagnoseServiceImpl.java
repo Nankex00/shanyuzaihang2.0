@@ -109,10 +109,13 @@ public class DiagnoseServiceImpl implements IDiagnoseService {
     public BaseResponse<List<Long>> searchDiagnoseByChildId(Long childId) {
         LambdaQueryWrapper<DiagnoseRecord> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(DiagnoseRecord::getChildId,childId)
-                .orderByDesc(DiagnoseRecord::getOperatedTime)
-                .last("limit 1");
-        DiagnoseRecord diagnoseRecord = diagnoseRecordMapper.selectOne(lambdaQueryWrapper);
-        return new BaseResponse<List<Long>>(diagnoseRecord.getDiagnoseDetail(), (long) diagnoseRecord.getDiagnoseDetail().size());
+                .orderByDesc(DiagnoseRecord::getOperatedTime);
+        List<DiagnoseRecord> diagnoseRecords = diagnoseRecordMapper.selectList(lambdaQueryWrapper);
+        if (!diagnoseRecords.isEmpty()){
+            return new BaseResponse<List<Long>>(diagnoseRecords.getFirst().getDiagnoseDetail(), (long) diagnoseRecords.getFirst().getDiagnoseDetail().size());
+        }else {
+            return new BaseResponse<List<Long>>(null,0L);
+        }
     }
 
     @Override
