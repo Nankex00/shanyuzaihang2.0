@@ -9,11 +9,12 @@ import com.fushuhealth.recovery.device.model.request.RepeatFiltrateRecordRequest
 import com.fushuhealth.recovery.device.service.IRepeatFiltrateRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.NotNull;
 
 /**
  * @author Zhuanz

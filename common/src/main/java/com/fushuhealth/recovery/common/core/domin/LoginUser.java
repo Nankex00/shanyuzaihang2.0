@@ -1,5 +1,6 @@
 package com.fushuhealth.recovery.common.core.domin;
 
+import com.fushuhealth.recovery.common.core.domin.dto.RoleDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,12 +38,19 @@ public class LoginUser implements UserDetails {
      */
     private Long expireTime;
 
+    /**
+     * roleDto
+     */
+    private List<RoleDTO> roles;
+
+//    public LoginUser(Long userId, Long institutionId, SysUser user, Set<String> permissions,List<RoleDTO> roles)
     public LoginUser(Long userId, Long institutionId, SysUser user, Set<String> permissions)
     {
         this.userId = userId;
         this.institutionId = institutionId;
         this.user = user;
         this.permissions = permissions;
+//        this.roles = roles;
     }
 
 

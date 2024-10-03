@@ -7,11 +7,12 @@ import com.fushuhealth.recovery.device.model.request.EvaluateRecordRequest;
 import com.fushuhealth.recovery.device.model.request.RepeatFiltrateEditRequest;
 import com.fushuhealth.recovery.device.service.IEvaluateRecordService;
 import io.swagger.annotations.ApiOperation;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.NotNull;
 
 /**
  * @author Zhuanz

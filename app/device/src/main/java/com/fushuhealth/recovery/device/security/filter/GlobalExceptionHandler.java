@@ -1,11 +1,12 @@
 package com.fushuhealth.recovery.device.security.filter;
 
-import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletRequest;
 
 import com.fushuhealth.recovery.common.api.AjaxResult;
 import com.fushuhealth.recovery.common.api.HttpStatus;
 import com.fushuhealth.recovery.common.exception.ServiceException;
 import com.fushuhealth.recovery.common.util.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;

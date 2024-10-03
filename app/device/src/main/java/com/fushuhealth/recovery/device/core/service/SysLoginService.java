@@ -9,6 +9,8 @@ import com.fushuhealth.recovery.common.exception.UserPasswordNotMatchException;
 import com.fushuhealth.recovery.common.util.IpUtils;
 import com.fushuhealth.recovery.common.util.StringUtils;
 import com.fushuhealth.recovery.device.core.context.AuthenticationContextHolder;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,8 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+//import javax.annotation.Resource;
+//import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 

@@ -3,17 +3,19 @@ package com.fushuhealth.recovery.device.security.filter;
 import java.io.IOException;
 import java.io.Serializable;
 
-import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson.JSON;
 import com.fushuhealth.recovery.common.api.AjaxResult;
 import com.fushuhealth.recovery.common.api.HttpStatus;
 import com.fushuhealth.recovery.common.util.ServletUtils;
 import com.fushuhealth.recovery.common.util.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
 
 /**
  * 认证失败处理类 返回未授权

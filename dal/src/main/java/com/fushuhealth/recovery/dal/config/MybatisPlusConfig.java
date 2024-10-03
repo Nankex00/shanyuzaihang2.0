@@ -3,6 +3,7 @@ package com.fushuhealth.recovery.dal.config;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.fushuhealth.recovery.dal.interceptor.PlusDataPermissionInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,7 @@ public class MybatisPlusConfig {
     /**
      * 数据权限拦截器
      */
-//    public PlusDataPermissionInterceptor dataPermissionInterceptor() {
-//        return new PlusDataPermissionInterceptor();
-//    }
+    public PlusDataPermissionInterceptor dataPermissionInterceptor() {
+        return new PlusDataPermissionInterceptor();
+    }
 }

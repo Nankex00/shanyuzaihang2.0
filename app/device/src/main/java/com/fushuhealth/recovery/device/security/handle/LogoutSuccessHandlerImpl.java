@@ -2,21 +2,24 @@ package com.fushuhealth.recovery.device.security.handle;
 
 import java.io.IOException;
 
-import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson.JSON;
 import com.fushuhealth.recovery.common.api.AjaxResult;
 import com.fushuhealth.recovery.common.core.domin.LoginUser;
 import com.fushuhealth.recovery.common.util.MessageUtils;
 import com.fushuhealth.recovery.common.util.ServletUtils;
 import com.fushuhealth.recovery.common.util.StringUtils;
 import com.fushuhealth.recovery.device.core.service.TokenService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+//import javax.servlet.ServletException;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
 
 /**
  * 自定义退出处理类 返回成功
