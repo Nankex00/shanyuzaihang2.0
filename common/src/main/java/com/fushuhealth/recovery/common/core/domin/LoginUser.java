@@ -18,7 +18,8 @@ public class LoginUser implements UserDetails {
 
     private Long userId;
 
-    private Long institutionId;
+//    private Long institutionId;
+    private Long deptId;
 
     private Long roleId;
 
@@ -43,14 +44,14 @@ public class LoginUser implements UserDetails {
      */
     private List<RoleDTO> roles;
 
-//    public LoginUser(Long userId, Long institutionId, SysUser user, Set<String> permissions,List<RoleDTO> roles)
-    public LoginUser(Long userId, Long institutionId, SysUser user, Set<String> permissions)
+    public LoginUser(Long userId, Long institutionId, SysUser user, Set<String> permissions,List<RoleDTO> roles)
+//    public LoginUser(Long userId, Long institutionId, SysUser user, Set<String> permissions)
     {
         this.userId = userId;
-        this.institutionId = institutionId;
+        this.deptId = institutionId;
         this.user = user;
         this.permissions = permissions;
-//        this.roles = roles;
+        this.roles = roles;
     }
 
 

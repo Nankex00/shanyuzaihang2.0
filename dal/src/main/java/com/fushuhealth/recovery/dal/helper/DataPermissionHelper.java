@@ -3,8 +3,13 @@ package com.fushuhealth.recovery.dal.helper;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.plugins.IgnoreStrategy;
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
+import com.fushuhealth.recovery.dal.context.RolePermissionContext;
+import jakarta.annotation.Resource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,14 +18,15 @@ import java.util.function.Supplier;
 /**
  * 数据权限助手
  *
- * @author Lion Li
- * @version 3.5.0
+ * @author Zhuanz
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("unchecked cast")
 public class DataPermissionHelper {
 
     private static final String DATA_PERMISSION_KEY = "data:permission";
+    @Resource
+    private static RolePermissionContext rolePermissionContext;
 
     public static <T> T getVariable(String key) {
         Map<String, Object> context = getContext();
@@ -34,18 +40,16 @@ public class DataPermissionHelper {
     }
 
     public static Map<String, Object> getContext() {
-//        SaStorage saStorage = SaHolder.getStorage();
-//        Object attribute = saStorage.get(DATA_PERMISSION_KEY);
-//        if (ObjectUtil.isNull(attribute)) {
-//            saStorage.set(DATA_PERMISSION_KEY, new HashMap<>());
-//            attribute = saStorage.get(DATA_PERMISSION_KEY);
-//        }
-//        if (attribute instanceof Map map) {
-//            return map;
-//        }
-//        throw new NullPointerException("data permission context type exception");
-        //todo:修改上下文
-        return null;
+        Map<String, Object> context = RolePermissionContext.getInstance().getContext();
+        Object attribute = context.get(DATA_PERMISSION_KEY);
+        if (ObjectUtil.isNull(attribute)) {
+            context.put(DATA_PERMISSION_KEY, new HashMap<>());
+            attribute = context.get(DATA_PERMISSION_KEY);
+        }
+        if (attribute instanceof Map map) {
+            return map;
+        }
+        throw new NullPointerException("data permission context type exception");
     }
 
     /**

@@ -1,5 +1,8 @@
 package com.fushuhealth.recovery.device.service;
 
+import com.fushuhealth.recovery.common.core.domin.dto.RoleDTO;
+
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,4 +18,11 @@ public interface ISysRoleService {
      * @return 权限列表
      */
     public Set<String> selectRolePermissionByUserId(Long userId);
+
+    /**
+     * 根据用户id查询角色DTO
+     * @param userId
+     * @return
+     */
+    List<RoleDTO> selectRoleDTOByUserId(Long userId);
 }

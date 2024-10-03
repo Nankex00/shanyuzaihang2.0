@@ -62,7 +62,6 @@ public class SysDeptServiceImpl implements ISysDeptService {
                 responses.add(sysDeptResponse);
             }
         });
-        //todo:分页有bug
         return new BaseResponse<>(responses,sysDeptPage.getTotal());
     }
 
@@ -148,7 +147,7 @@ public class SysDeptServiceImpl implements ISysDeptService {
         String ancestors = sysDept.getAncestors()+","+bo.getParentId();
         //修改机构表
         LambdaUpdateWrapper<SysDept> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        lambdaUpdateWrapper.eq(SysDept::getDeptId,SecurityUtils.getLoginUser().getInstitutionId())
+        lambdaUpdateWrapper.eq(SysDept::getDeptId,SecurityUtils.getLoginUser().getDeptId())
                 .set(SysDept::getDeptName,bo.getDeptName())
                 .set(SysDept::getInstitutionLevel,bo.getInstitutionLevel())
                 .set(ObjectUtil.isNotEmpty(bo.getAddress()),SysDept::getAddress,bo.getAddress())

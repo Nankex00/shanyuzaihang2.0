@@ -119,7 +119,7 @@ public class DiagnoseServiceImpl implements IDiagnoseService {
     public int addDiagnoseRecord(DiagnoseRequest request) {
         DiagnoseRecord diagnoseRecord = BeanUtil.copyProperties(request, DiagnoseRecord.class);
         diagnoseRecord.setOperatedTime(new Date());
-        diagnoseRecord.setOperatedId(SecurityUtils.getLoginUser().getInstitutionId());
+        diagnoseRecord.setOperatedId(SecurityUtils.getLoginUser().getDeptId());
         StringJoiner joiner = new StringJoiner(",");
         request.getDiagnoseDetail().forEach(diagnose->{
             String categoryName = Optional.ofNullable(diagnoseMapper.selectById(diagnose)).orElseThrow(() -> new ServiceException("数据异常，不存在对应的信息")).getCategoryName();

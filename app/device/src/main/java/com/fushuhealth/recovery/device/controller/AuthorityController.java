@@ -2,27 +2,20 @@ package com.fushuhealth.recovery.device.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fushuhealth.recovery.common.api.AjaxResult;
-import com.fushuhealth.recovery.common.constant.Constants;
 import com.fushuhealth.recovery.common.core.domin.LoginBody;
-import com.fushuhealth.recovery.common.util.SecurityUtils;
 import com.fushuhealth.recovery.common.core.domin.SysMenu;
 import com.fushuhealth.recovery.common.core.domin.SysUser;
+import com.fushuhealth.recovery.common.util.SecurityUtils;
 import com.fushuhealth.recovery.device.core.service.SysLoginService;
 import com.fushuhealth.recovery.device.core.service.SysPermissionService;
 import com.fushuhealth.recovery.device.model.response.InfoResponse;
 import com.fushuhealth.recovery.device.model.vo.SysUserVo;
 import com.fushuhealth.recovery.device.service.ISysDeptService;
 import com.fushuhealth.recovery.device.service.ISysMenuService;
-import com.fushuhealth.recovery.device.service.ISysUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-//import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Set;
 
@@ -69,7 +62,7 @@ public class AuthorityController {
 
         SysUserVo sysUserVo = BeanUtil.copyProperties(user, SysUserVo.class);
         sysUserVo.setInstitutionLevel(sysDeptService.selectDeptLevelByDeptId(user.getDeptId()));
-        sysUserVo.setDeptName(sysDeptService.selectDeptNameById(SecurityUtils.getLoginUser().getInstitutionId()));
+        sysUserVo.setDeptName(sysDeptService.selectDeptNameById(SecurityUtils.getLoginUser().getDeptId()));
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
         // 权限集合

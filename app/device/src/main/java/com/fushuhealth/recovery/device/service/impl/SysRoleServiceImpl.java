@@ -1,9 +1,13 @@
 package com.fushuhealth.recovery.device.service.impl;
 
+import com.fushuhealth.recovery.common.core.domin.SysUser;
+import com.fushuhealth.recovery.common.core.domin.dto.RoleDTO;
 import com.fushuhealth.recovery.common.util.StringUtils;
 import com.fushuhealth.recovery.dal.dao.SysRoleMapper;
 import com.fushuhealth.recovery.common.core.domin.SysRole;
+import com.fushuhealth.recovery.dal.entity.SysUserRole;
 import com.fushuhealth.recovery.device.service.ISysRoleService;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +46,14 @@ public class SysRoleServiceImpl implements ISysRoleService {
             }
         }
         return permsSet;
+    }
+
+    @Override
+    public List<RoleDTO> selectRoleDTOByUserId(Long userId) {
+        MPJLambdaWrapper<SysRole> lambdaWrapper = new MPJLambdaWrapper<>();
+        lambdaWrapper.selectAll(SysRole.class)
+                .eq(SysUserRole::getUserId,userId)
+                .leftJoin(SysUserRole.class,SysUserRole::getRoleId,SysRole::getRoleId);
+        return roleMapper.selectJoinList(RoleDTO.class, lambdaWrapper);
     }
 }

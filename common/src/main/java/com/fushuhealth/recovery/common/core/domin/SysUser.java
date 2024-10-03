@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fushuhealth.recovery.common.core.domin.dto.RoleDTO;
 import com.fushuhealth.recovery.common.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -8,7 +8,6 @@ import java.lang.annotation.*;
  * 一个注解只能对应一个模板
  *
  * @author Zhuanz
- * @version 3.5.0
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

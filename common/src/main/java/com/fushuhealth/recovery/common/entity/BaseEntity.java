@@ -1,5 +1,6 @@
 package com.fushuhealth.recovery.common.entity;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -26,5 +27,6 @@ public class BaseEntity implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
+    @TableLogic
     private Integer delFlag;
 }

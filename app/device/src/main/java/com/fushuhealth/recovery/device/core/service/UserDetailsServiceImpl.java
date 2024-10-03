@@ -3,9 +3,11 @@ package com.fushuhealth.recovery.device.core.service;
 import com.fushuhealth.recovery.common.constant.UserStatus;
 import com.fushuhealth.recovery.common.core.domin.LoginUser;
 import com.fushuhealth.recovery.common.core.domin.SysUser;
+import com.fushuhealth.recovery.common.core.domin.dto.RoleDTO;
 import com.fushuhealth.recovery.common.exception.ServiceException;
 import com.fushuhealth.recovery.common.util.MessageUtils;
 import com.fushuhealth.recovery.common.util.StringUtils;
+import com.fushuhealth.recovery.device.service.ISysRoleService;
 import com.fushuhealth.recovery.device.service.ISysUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 用户验证处理
@@ -33,6 +37,9 @@ public class UserDetailsServiceImpl implements UserDetailsService
 
     @Autowired
     private SysPermissionService permissionService;
+
+    @Autowired
+    private ISysRoleService iSysRoleService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
@@ -61,7 +68,7 @@ public class UserDetailsServiceImpl implements UserDetailsService
 
     public UserDetails createLoginUser(SysUser user)
     {
-
-        return new LoginUser(user.getUserId(), user.getDeptId(), user, permissionService.getMenuPermission(user));
+        List<RoleDTO> roles = iSysRoleService.selectRoleDTOByUserId(user.getUserId());
+        return new LoginUser(user.getUserId(), user.getDeptId(), user, permissionService.getMenuPermission(user),roles);
     }
 }

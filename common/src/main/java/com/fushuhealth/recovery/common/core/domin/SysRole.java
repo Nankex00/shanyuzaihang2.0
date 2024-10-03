@@ -1,5 +1,6 @@
 package com.fushuhealth.recovery.common.core.domin;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fushuhealth.recovery.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -44,15 +45,19 @@ public class SysRole extends BaseEntity
 //    /** 删除标志（0代表存在 2代表删除） */
 //    private String delFlag;
 
+    @TableField(exist = false)
     /** 用户是否存在此角色标识 默认不存在 */
     private boolean flag = false;
 
     /** 菜单组 */
+    @TableField(exist = false)
     private Long[] menuIds;
 
+    @TableField(exist = false)
     /** 部门组（数据权限） */
     private Long[] deptIds;
 
+    @TableField(exist = false)
     /** 角色菜单权限 */
     private Set<String> permissions;
 

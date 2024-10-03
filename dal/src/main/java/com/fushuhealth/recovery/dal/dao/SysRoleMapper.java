@@ -2,6 +2,7 @@ package com.fushuhealth.recovery.dal.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.fushuhealth.recovery.common.core.domin.SysRole;
+import com.github.yulichang.base.MPJBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -13,7 +14,7 @@ import java.util.List;
  */
 
 @Mapper
-public interface SysRoleMapper extends BaseMapper<SysRole> {
+public interface SysRoleMapper extends MPJBaseMapper<SysRole> {
 
     /**
      * 根据用户ID查询角色
