@@ -1,4 +1,8 @@
 spring:
+  mvc:
+    pathmatch:
+      #Swagger3需要的配置
+      matching-strategy: ant_path_matcher
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     # 动态数据源文档 https://www.kancloud.cn/tracy5546/dynamic-datasource/content

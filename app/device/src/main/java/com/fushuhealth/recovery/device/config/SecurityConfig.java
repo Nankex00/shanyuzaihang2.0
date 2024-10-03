@@ -88,12 +88,12 @@ public class SecurityConfig
                     // 放开哪些接口
                         authorize
                             .requestMatchers(HttpMethod.POST,"/login")
-                            .permitAll()
+                            .permitAll();
 //                    authorize.requestMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html","/img/**", "/**/*.css", "/**/*.js", "/profile/**")
 //                            .permitAll();
-//                    authorize.requestMatchers
-//                            ("/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/*/api-docs", "/druid/**")
-//                            .permitAll();
+                    authorize.requestMatchers
+                            ("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/druid/**")
+                            .permitAll()
                     // 其他的都需要认证
                     .anyRequest().authenticated();
                 })
