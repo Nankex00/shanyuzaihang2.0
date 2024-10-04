@@ -1,22 +1,21 @@
-package com.fushuhealth.recovery.device.model.vo;
+package com.fushuhealth.recovery.device.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
  * @author Zhuanz
- * @date 2024/9/30
+ * @date 2024/10/4
  */
 @Data
-public class PredictWarnListVo {
+public class EvaluateRecordListDto {
     private Long id;
     private String name;
     private String sex;
     private String dateOfBirth;
     private Byte dangerLevel;
     private Byte monthAge;
-    private Byte warnResult;
     private Date submitTime;
+    private String deptName;
 }

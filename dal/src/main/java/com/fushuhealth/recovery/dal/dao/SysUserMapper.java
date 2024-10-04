@@ -3,13 +3,14 @@ package com.fushuhealth.recovery.dal.dao;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.fushuhealth.recovery.common.core.domin.SysUser;
+import com.github.yulichang.base.MPJBaseMapper;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 @Mapper
-public interface SysUserMapper extends BaseMapper<SysUser> {
+public interface SysUserMapper extends MPJBaseMapper<SysUser> {
 
     @Select("SELECT  user_id,user_name,dept_id,password,enable,status,create_by,create_time,update_by,update_time,del_flag  FROM sys_user WHERE (user_name = #{userName})")
     public SysUser selectUserByUserName(String userName);

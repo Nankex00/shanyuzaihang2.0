@@ -3,7 +3,9 @@ package com.fushuhealth.recovery.device.service;
 import com.fushuhealth.recovery.common.api.BaseResponse;
 import com.fushuhealth.recovery.dal.entity.RepeatFiltrateRecord;
 import com.fushuhealth.recovery.device.model.request.RepeatFiltrateEditRequest;
+import com.fushuhealth.recovery.device.model.request.RepeatFiltrateListRequest;
 import com.fushuhealth.recovery.device.model.request.RepeatFiltrateRecordRequest;
+import com.fushuhealth.recovery.device.model.response.RepeatFiltrateListResponse;
 import com.fushuhealth.recovery.device.model.response.RepeatFiltrateRecordDetail;
 import com.fushuhealth.recovery.device.model.response.RepeatFiltrateRecordResponse;
 
@@ -23,4 +25,6 @@ public interface IRepeatFiltrateRecordService {
     int editDetail(RepeatFiltrateEditRequest request);
 
     int delete(Long id);
+
+    BaseResponse<List<RepeatFiltrateListResponse>> searchDeptList(RepeatFiltrateListRequest request);
 }

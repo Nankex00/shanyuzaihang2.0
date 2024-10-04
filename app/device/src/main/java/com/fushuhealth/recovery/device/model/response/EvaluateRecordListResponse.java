@@ -7,10 +7,10 @@ import java.util.Date;
 
 /**
  * @author Zhuanz
- * @date 2024/9/30
+ * @date 2024/10/4
  */
 @Data
-public class PredictWarnListResponse {
+public class EvaluateRecordListResponse {
     private Long id;
     private String name;
     private String sex;
@@ -18,7 +18,7 @@ public class PredictWarnListResponse {
     private String dateOfBirth;
     private String dangerLevel;
     private String monthAge;
-    private String warnResult;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date submitTime;
+    private String deptName;
 }

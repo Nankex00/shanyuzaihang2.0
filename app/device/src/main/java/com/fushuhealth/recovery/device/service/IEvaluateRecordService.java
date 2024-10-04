@@ -2,8 +2,10 @@ package com.fushuhealth.recovery.device.service;
 
 import com.fushuhealth.recovery.common.api.BaseResponse;
 import com.fushuhealth.recovery.device.model.request.EvaluateRecordEditRequest;
+import com.fushuhealth.recovery.device.model.request.EvaluateRecordListRequest;
 import com.fushuhealth.recovery.device.model.request.EvaluateRecordRequest;
 import com.fushuhealth.recovery.device.model.response.EvaluateRecordDetail;
+import com.fushuhealth.recovery.device.model.response.EvaluateRecordListResponse;
 import com.fushuhealth.recovery.device.model.response.EvaluateRecordResponse;
 
 import java.util.List;
@@ -22,4 +24,6 @@ public interface IEvaluateRecordService {
     int editDetail(EvaluateRecordEditRequest request);
 
     int delete(Long id);
+
+    BaseResponse<List<EvaluateRecordListResponse>> searchDeptList(EvaluateRecordListRequest request);
 }

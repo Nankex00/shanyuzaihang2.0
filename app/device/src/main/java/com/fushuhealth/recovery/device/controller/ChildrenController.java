@@ -138,4 +138,5 @@ public class ChildrenController extends BaseController {
     private AjaxResult searchListHighRisk(@RequestBody @NotNull() HighRiskChildrenRequest request){
         return AjaxResult.success(iChildrenService.searchListHighRisk(request));
     }
+
 }

@@ -3,23 +3,35 @@ package com.fushuhealth.recovery.device.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fushuhealth.recovery.common.api.BaseResponse;
+import com.fushuhealth.recovery.common.constant.DangerLevelType;
 import com.fushuhealth.recovery.common.constant.MonthType;
+import com.fushuhealth.recovery.common.constant.WarnResultType;
 import com.fushuhealth.recovery.common.core.domin.SysUser;
 import com.fushuhealth.recovery.common.exception.ServiceException;
 import com.fushuhealth.recovery.common.util.SecurityUtils;
+import com.fushuhealth.recovery.dal.dao.ChildrenMapper;
 import com.fushuhealth.recovery.dal.dao.RepeatFiltrateRecordMapper;
+import com.fushuhealth.recovery.dal.entity.Children;
+import com.fushuhealth.recovery.dal.entity.PredictWarn;
 import com.fushuhealth.recovery.dal.entity.RepeatFiltrateRecord;
 import com.fushuhealth.recovery.dal.entity.SysDept;
+import com.fushuhealth.recovery.device.model.dto.RepeatFiltrateListDto;
 import com.fushuhealth.recovery.device.model.request.RepeatFiltrateEditRequest;
+import com.fushuhealth.recovery.device.model.request.RepeatFiltrateListRequest;
 import com.fushuhealth.recovery.device.model.request.RepeatFiltrateRecordRequest;
+import com.fushuhealth.recovery.device.model.response.PredictWarnListResponse;
+import com.fushuhealth.recovery.device.model.response.RepeatFiltrateListResponse;
 import com.fushuhealth.recovery.device.model.response.RepeatFiltrateRecordDetail;
 import com.fushuhealth.recovery.device.model.response.RepeatFiltrateRecordResponse;
+import com.fushuhealth.recovery.device.model.vo.PredictWarnListVo;
 import com.fushuhealth.recovery.device.service.IRepeatFiltrateRecordService;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +44,8 @@ import java.util.List;
 public class RepeatFiltrateRecordServiceImpl implements IRepeatFiltrateRecordService {
     @Autowired
     private RepeatFiltrateRecordMapper repeatFiltrateRecordMapper;
+    @Autowired
+    private ChildrenMapper childrenMapper;
     @Override
     public int addRepeatFiltrateRecord(RepeatFiltrateRecordRequest request) {
         RepeatFiltrateRecord repeatFiltrateRecord = BeanUtil.copyProperties(request,RepeatFiltrateRecord.class);
@@ -94,5 +108,35 @@ public class RepeatFiltrateRecordServiceImpl implements IRepeatFiltrateRecordSer
                 .eq(RepeatFiltrateRecord::getId,id)
                 .set(RepeatFiltrateRecord::getDelFlag,1);
         return repeatFiltrateRecordMapper.update(new RepeatFiltrateRecord(),lambdaUpdateWrapper);
+    }
+
+    @Override
+    public BaseResponse<List<RepeatFiltrateListResponse>> searchDeptList(RepeatFiltrateListRequest request) {
+        Page<RepeatFiltrateListDto> page = new Page<>(request.getPageNum(),request.getPageSize());
+        MPJLambdaWrapper<Children> lambdaWrapper = new MPJLambdaWrapper<>();
+        lambdaWrapper.selectAll(Children.class)
+                .selectAs(RepeatFiltrateRecord::getMonthAge, RepeatFiltrateListDto::getMonthAge)
+                .selectAs(RepeatFiltrateRecord::getSubmitTime,RepeatFiltrateListDto::getSubmitTime)
+                .selectAs(SysDept::getDeptName,RepeatFiltrateListDto::getDeptName)
+                .innerJoin(RepeatFiltrateRecord.class,RepeatFiltrateRecord::getChildId,Children::getId)
+                .innerJoin(SysUser.class,SysUser::getUserId,RepeatFiltrateRecord::getOperatedId)
+                .innerJoin(SysDept.class,SysDept::getDeptId,SysUser::getUserId);
+        Byte type = request.getType() != null ? request.getType() : 0; // 默认值为 0，根据需要修改
+        lambdaWrapper.eq(type != 0, Children::getDangerLevel, type);
+        if (request.getQuery()!=null&& !request.getQuery().isEmpty()){
+            lambdaWrapper.like(Children::getId,request.getQuery())
+                    .or()
+                    .like(Children::getName,request.getQuery());
+        }
+        lambdaWrapper.orderByDesc(RepeatFiltrateRecord::getSubmitTime);
+        childrenMapper.selectJoinPage(page,RepeatFiltrateListDto.class, lambdaWrapper);
+        List<RepeatFiltrateListResponse> responses = new ArrayList<>();
+        page.getRecords().forEach(repeatFiltrateListDto -> {
+            RepeatFiltrateListResponse response = BeanUtil.copyProperties(repeatFiltrateListDto,RepeatFiltrateListResponse.class);
+            response.setMonthAge(MonthType.findMonthByType(repeatFiltrateListDto.getMonthAge()));
+            response.setDangerLevel(DangerLevelType.findDangerLevelByType(repeatFiltrateListDto.getDangerLevel()));
+            responses.add(response);
+        });
+        return new BaseResponse<List<RepeatFiltrateListResponse>>(responses, page.getTotal());
     }
 }

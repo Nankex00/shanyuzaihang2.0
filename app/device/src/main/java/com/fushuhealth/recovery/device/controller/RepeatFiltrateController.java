@@ -5,9 +5,11 @@ import com.fushuhealth.recovery.common.api.BaseController;
 import com.fushuhealth.recovery.dal.dao.RepeatFiltrateRecordMapper;
 import com.fushuhealth.recovery.dal.entity.RepeatFiltrateRecord;
 import com.fushuhealth.recovery.device.model.request.RepeatFiltrateEditRequest;
+import com.fushuhealth.recovery.device.model.request.RepeatFiltrateListRequest;
 import com.fushuhealth.recovery.device.model.request.RepeatFiltrateRecordRequest;
 import com.fushuhealth.recovery.device.service.IRepeatFiltrateRecordService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -54,5 +56,11 @@ public class RepeatFiltrateController extends BaseController {
     @DeleteMapping("/delete")
     public AjaxResult delete(@NotNull(message = "记录id不能为空") Long id){
         return toAjax(iRepeatFiltrateRecordService.delete(id));
+    }
+
+    @Operation(summary = "机构下复筛记录列表")
+    @GetMapping("/dept/list")
+    public AjaxResult searchDeptList(@Validated @Parameter RepeatFiltrateListRequest request){
+        return AjaxResult.success(iRepeatFiltrateRecordService.searchDeptList(request));
     }
 }

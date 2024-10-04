@@ -2,6 +2,7 @@ package com.fushuhealth.recovery.dal.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.fushuhealth.recovery.dal.entity.TransferRecord;
+import com.github.yulichang.base.MPJBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -9,5 +10,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2024/9/27
  */
 @Mapper
-public interface TransferRecordMapper extends BaseMapper<TransferRecord> {
+public interface TransferRecordMapper extends MPJBaseMapper<TransferRecord> {
 }

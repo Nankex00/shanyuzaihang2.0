@@ -1,22 +1,24 @@
 package com.fushuhealth.recovery.device.model.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-//import javax.validation.constraints.NotNull;
-import java.util.List;
-
 /**
  * @author Zhuanz
- * @date 2024/9/30
+ * @date 2024/10/4
  */
 @Data
-public class HighRiskChildrenRequest {
+@Schema(name = "机构复筛列表入参 RepeatFiltrateListRequest")
+public class RepeatFiltrateListRequest {
+    @Schema(name = "query")
     private String query;
+    @Schema(name = "type")
     private Byte type;
-    private List<Long> risks;
+    @Schema(name = "pageSize")
     @NotNull(message = "pageSize不能为空")
     private Integer pageSize;
+    @Schema(name = "pageNum")
     @NotNull(message = "pageNum不能为空")
     private Integer pageNum;
 }

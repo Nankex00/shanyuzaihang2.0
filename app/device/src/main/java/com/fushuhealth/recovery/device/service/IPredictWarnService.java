@@ -15,4 +15,6 @@ public interface IPredictWarnService {
     BaseResponse<List<PredictWarnResponse>> searchPredictByChildId(Long id);
 
     BaseResponse<List<PredictWarnListResponse>> searchList(PredictWarnRequest request);
+
+    int updateStatus();
 }

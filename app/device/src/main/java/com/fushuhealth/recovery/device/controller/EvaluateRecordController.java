@@ -3,9 +3,12 @@ package com.fushuhealth.recovery.device.controller;
 import com.fushuhealth.recovery.common.api.AjaxResult;
 import com.fushuhealth.recovery.common.api.BaseController;
 import com.fushuhealth.recovery.device.model.request.EvaluateRecordEditRequest;
+import com.fushuhealth.recovery.device.model.request.EvaluateRecordListRequest;
 import com.fushuhealth.recovery.device.model.request.EvaluateRecordRequest;
+import com.fushuhealth.recovery.device.model.request.RepeatFiltrateListRequest;
 import com.fushuhealth.recovery.device.service.IEvaluateRecordService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -50,5 +53,11 @@ public class EvaluateRecordController extends BaseController{
     @DeleteMapping("/delete")
     public AjaxResult delete(@NotNull(message = "记录id不能为空") Long id){
         return toAjax(iEvaluateRecordService.delete(id));
+    }
+
+    @Operation(summary = "机构评估记录列表")
+    @GetMapping("/dept/list")
+    public AjaxResult searchDeptList(@Validated EvaluateRecordListRequest request){
+        return AjaxResult.success(iEvaluateRecordService.searchDeptList(request));
     }
 }
