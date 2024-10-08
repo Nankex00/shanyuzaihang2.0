@@ -1,11 +1,15 @@
 package com.fushuhealth.recovery.common.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Entity基类
@@ -29,4 +33,18 @@ public class BaseEntity implements Serializable {
 
     @TableLogic
     private Integer delFlag;
+
+    /** 请求参数 */
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @TableField(exist = false)
+    private Map<String, Object> params;
+
+    public Map<String, Object> getParams()
+    {
+        if (params == null)
+        {
+            params = new HashMap<>();
+        }
+        return params;
+    }
 }

@@ -20,7 +20,7 @@ public interface PredictWarnMapper extends MPJBaseMapper<PredictWarn> {
             "        CASE" +
             "            WHEN #{currentTime} < warn_start AND warn_status != 2 THEN 4" +
             "            WHEN #{currentTime} >= warn_start AND #{currentTime} <= warn_end AND warn_status != 2 THEN 3" +
-            "            WHEN #{currentTime} > warn_end AND warn_status != 2 THEN 1\n" +
+            "            WHEN #{currentTime} > warn_end AND warn_status != 2 THEN 1" +
             "            ELSE warn_status" +
             "        END")
     int updateWarnStatusByTime(@Param("currentTime") LocalDateTime currentTime);

@@ -40,4 +40,7 @@ public interface ISysUserService {
      */
     boolean isUserExist(String userName);
 
+
+    Long getUserId(Long deptId);
+
 }

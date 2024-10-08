@@ -135,7 +135,7 @@ public class ChildrenController extends BaseController {
 
     @Operation(summary = "高危儿管理列表")
     @GetMapping("/highRisk/list")
-    private AjaxResult searchListHighRisk(@RequestBody @NotNull() HighRiskChildrenRequest request){
+    private AjaxResult searchListHighRisk(@Validated HighRiskChildrenRequest request){
         return AjaxResult.success(iChildrenService.searchListHighRisk(request));
     }
 

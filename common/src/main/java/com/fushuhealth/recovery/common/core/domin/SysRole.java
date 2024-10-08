@@ -1,6 +1,8 @@
 package com.fushuhealth.recovery.common.core.domin;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fushuhealth.recovery.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,6 +21,7 @@ public class SysRole extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 角色ID */
+    @TableId(type = IdType.AUTO)
     private Long roleId;
 
     /** 角色名称 */

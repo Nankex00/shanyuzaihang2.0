@@ -1,6 +1,9 @@
 package com.fushuhealth.recovery.device.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.fushuhealth.recovery.common.core.domin.SysRole;
 import com.fushuhealth.recovery.common.core.domin.dto.RoleDTO;
+import com.fushuhealth.recovery.device.model.request.PermissionRequest;
 
 import java.util.List;
 import java.util.Set;
@@ -9,7 +12,7 @@ import java.util.Set;
  * @author Zhuanz
  * @date 2024/9/23
  */
-public interface ISysRoleService {
+public interface ISysRoleService extends IService<SysRole>{
 
     /**
      * 根据用户ID查询角色权限
@@ -25,4 +28,6 @@ public interface ISysRoleService {
      * @return
      */
     List<RoleDTO> selectRoleDTOByUserId(Long userId);
+
+    int editUserPermission(PermissionRequest request);
 }

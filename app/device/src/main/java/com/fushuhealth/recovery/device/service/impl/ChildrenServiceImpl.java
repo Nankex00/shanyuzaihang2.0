@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fushuhealth.recovery.common.api.BaseResponse;
 import com.fushuhealth.recovery.common.constant.DangerLevelType;
 import com.fushuhealth.recovery.common.exception.ServiceException;
+import com.fushuhealth.recovery.common.util.DataTypeUtils;
 import com.fushuhealth.recovery.dal.dao.ChildrenMapper;
 import com.fushuhealth.recovery.dal.dao.DiagnoseRecordMapper;
 import com.fushuhealth.recovery.dal.dao.RisksMapper;
@@ -14,6 +15,7 @@ import com.fushuhealth.recovery.dal.entity.Children;
 import com.fushuhealth.recovery.dal.entity.DiagnoseRecord;
 import com.fushuhealth.recovery.dal.entity.SysDept;
 import com.fushuhealth.recovery.device.model.dto.ChildrenDetailDto;
+import com.fushuhealth.recovery.device.model.dto.DiagnoseRecordDto;
 import com.fushuhealth.recovery.device.model.request.ChildrenRequest;
 import com.fushuhealth.recovery.device.model.request.HighRiskChildrenRequest;
 import com.fushuhealth.recovery.device.model.response.ChildrenDetail;
@@ -75,16 +77,20 @@ public class ChildrenServiceImpl implements IChildrenService {
                 .eq(Children::getId,id)
                 .leftJoin(SysDept.class,SysDept::getDeptId,Children::getDeptId);
         ChildrenDetailDto childrenDetailDto = Optional.ofNullable(childrenMapper.selectJoinOne(ChildrenDetailDto.class, lambdaWrapper)).orElseThrow(() -> new ServiceException("参数错误，没有对应的儿童信息"));
+        List<Long> dangerOfChild = DataTypeUtils.IntegerToLongTypeHandler(childrenDetailDto.getDangerOfChild());
+        List<Long> dangerOfMother = DataTypeUtils.IntegerToLongTypeHandler(childrenDetailDto.getDangerOfMother());
         //根据儿童信息中的列表为高危因素属性赋值
         ChildrenDetail childrenDetail = BeanUtil.copyProperties(childrenDetailDto, ChildrenDetail.class);
-        childrenDetail.setDangerOfMother(risksService.RisksExChanged(childrenDetailDto.getDangerOfMother()));
-        childrenDetail.setDangerOfChild(risksService.RisksExChanged(childrenDetailDto.getDangerOfChild()));
+        childrenDetail.setDangerOfMother(risksService.RisksExChanged(dangerOfMother));
+        childrenDetail.setDangerOfChild(risksService.RisksExChanged(dangerOfChild));
         //加入最近的诊断记录
-        LambdaQueryWrapper<DiagnoseRecord> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-       lambdaQueryWrapper.eq(DiagnoseRecord::getChildId,id)
+        MPJLambdaWrapper<DiagnoseRecord> lambdaQueryWrapper = new MPJLambdaWrapper<>();
+       lambdaQueryWrapper
+               .selectAll(DiagnoseRecord.class)
+               .eq(DiagnoseRecord::getChildId,id)
                .last("limit 1");
-        Optional.ofNullable(diagnoseRecordMapper.selectOne(lambdaQueryWrapper)).ifPresentOrElse(
-                diagnoseRecord1 -> childrenDetail.setDiagnoseList(diagnoseRecord1.getDiagnoseDetail())
+        Optional.ofNullable(diagnoseRecordMapper.selectJoinOne(DiagnoseRecordDto.class,lambdaQueryWrapper)).ifPresentOrElse(
+                diagnoseRecord1 -> childrenDetail.setDiagnoseList(DataTypeUtils.IntegerToLongTypeHandler(diagnoseRecord1.getDiagnoseDetail()))
         ,()->childrenDetail.setDiagnoseList(null));
         return childrenDetail;
     }
@@ -107,16 +113,20 @@ public class ChildrenServiceImpl implements IChildrenService {
             lambdaQueryWrapper.in(Children::getDangerLevel, 1, 2, 3); // 使用 in 查询
         }
         List<Long> risks = request.getRisks();
-        if ((risks!=null)&&!risks.isEmpty()){
-            lambdaQueryWrapper.and(qw-> {
-                for (Long risk: risks) {
-                    qw.apply("JSON_CONTAINS(danger_of_mother, '" + risk + "')");
+        if ((risks != null) && !risks.isEmpty()) {
+            lambdaQueryWrapper.nested(qw -> {
+                for (int i = 0; i < risks.size(); i++) {
+                    if (i > 0) {
+                        qw.or();
+                    }
+                    qw.apply("JSON_CONTAINS(danger_of_mother, '" + risks.get(i) + "')");
                 }
-            });
-            lambdaQueryWrapper.or();
-            lambdaQueryWrapper.and(qw->{
-                for (Long risk: risks) {
-                    qw.apply("JSON_CONTAINS(danger_of_child, '" + risk + "')");
+            }).or(qw -> {
+                for (int i = 0; i < risks.size(); i++) {
+                    if (i > 0) {
+                        qw.or();
+                    }
+                    qw.apply("JSON_CONTAINS(danger_of_child, '" + risks.get(i) + "')");
                 }
             });
         }

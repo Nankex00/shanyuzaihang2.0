@@ -1,6 +1,7 @@
 package com.fushuhealth.recovery.device.service;
 
 import com.fushuhealth.recovery.common.api.BaseResponse;
+import com.fushuhealth.recovery.dal.entity.SysRoleDept;
 import com.fushuhealth.recovery.device.model.bo.SysDeptBo;
 import com.fushuhealth.recovery.device.model.request.InstitutionRequest;
 import com.fushuhealth.recovery.device.model.request.MyDeptRequest;
@@ -33,4 +34,6 @@ public interface ISysDeptService {
     Long selectDeptLevelByDeptId(Long deptId);
 
     int editMyInstitution(MyDeptRequest bo);
+
+    Long getRoleId(Long deptId);
 }

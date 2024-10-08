@@ -1,7 +1,9 @@
 package com.fushuhealth.recovery.dal.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.fushuhealth.recovery.common.core.domin.SysMenu;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.List;
  */
 
 @Mapper
-public interface SysMenuMapper {
+public interface SysMenuMapper extends BaseMapper<SysMenu> {
 
     /**
      * 根据角色ID查询权限
@@ -67,4 +69,18 @@ public interface SysMenuMapper {
             " where u.user_id = #{userId} and m.menu_type in ('M', 'C') and m.status = 0  AND ro.status = 0" +
             " order by m.parent_id, m.order_num")
     public List<SysMenu> selectMenuTreeByUserId(Long userId);
+
+    List<SysMenu> selectMenuList(SysMenu menu);
+
+    List<SysMenu> selectMenuListByUserId(SysMenu menu);
+
+    /**
+     * 根据角色ID查询菜单树信息
+     *
+     * @param roleId 角色ID
+     * @param menuCheckStrictly 菜单树选择项是否关联显示
+     * @return 选中菜单列表
+     */
+    public List<Long> selectMenuListByRoleId(@Param("roleId") Long roleId, @Param("menuCheckStrictly") boolean menuCheckStrictly);
+
 }

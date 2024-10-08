@@ -2,6 +2,7 @@ package com.fushuhealth.recovery.device.model.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.web.bind.annotation.RequestParam;
 
 //import javax.validation.constraints.NotNull;
 import java.util.List;

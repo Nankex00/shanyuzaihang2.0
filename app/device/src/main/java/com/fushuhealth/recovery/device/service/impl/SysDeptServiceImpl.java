@@ -12,6 +12,8 @@ import com.fushuhealth.recovery.common.util.SecurityUtils;
 import com.fushuhealth.recovery.dal.dao.SysDeptMapper;
 import com.fushuhealth.recovery.dal.dao.SysUserMapper;
 import com.fushuhealth.recovery.dal.entity.SysDept;
+import com.fushuhealth.recovery.dal.entity.SysRoleDept;
+import com.fushuhealth.recovery.dal.entity.SysUserRole;
 import com.fushuhealth.recovery.device.model.bo.SysDeptBo;
 import com.fushuhealth.recovery.device.model.request.InstitutionRequest;
 import com.fushuhealth.recovery.device.model.request.MyDeptRequest;
@@ -87,6 +89,14 @@ public class SysDeptServiceImpl implements ISysDeptService {
         String ancestors = parentDept.getAncestors()+","+bo.getParentId();
         sysDept.setAncestors(ancestors);
         sysDeptMapper.insert(sysDept);
+        //新增部门与角色关联,roleId为默认机构等级所对应角色，不能设置为平台管理员
+        SysRoleDept roleDept = new SysRoleDept();
+        roleDept.setDeptId(sysDept.getDeptId());
+        if (bo.getInstitutionLevel()!=1L){
+            roleDept.setRoleId(bo.getInstitutionLevel());
+        }else {
+            throw new ServiceException("参数异常，不允许设置为管理员权限");
+        }
         user.setDeptId(sysDept.getDeptId());
         user.setRoleId(bo.getInstitutionLevel());
         return userService.insertUser(user);
@@ -163,6 +173,17 @@ public class SysDeptServiceImpl implements ISysDeptService {
                 .set(SysUser::getPassword,SecurityUtils.encryptPassword(bo.getPassword()));
         return sysUserMapper.update(new SysUser(),lambdaUpdateWrapper1);
     }
+
+    @Override
+    public Long getRoleId(Long deptId) {
+        MPJLambdaWrapper<SysDept> lambdaWrapper = new MPJLambdaWrapper<>();
+        lambdaWrapper
+                .selectAll(SysRoleDept.class)
+                .eq(SysDept::getDeptId,deptId)
+                .leftJoin(SysRoleDept.class,SysRoleDept::getDeptId,SysDept::getDeptId);
+        return Optional.ofNullable(sysDeptMapper.selectJoinOne(SysRoleDept.class, lambdaWrapper)).orElseThrow(() -> new ServiceException("数据异常,不存在对应的关联表")).getRoleId();
+    }
+
     @Override
     public InstitutionResponse searchDetail(Long id) {
         SysUser sysUser = Optional.ofNullable(sysUserMapper.selectById(id)).orElseThrow(()->new ServiceException("参数异常，不存在对应的用户"));

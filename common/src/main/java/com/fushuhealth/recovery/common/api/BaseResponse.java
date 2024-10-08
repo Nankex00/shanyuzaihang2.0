@@ -2,6 +2,7 @@ package com.fushuhealth.recovery.common.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Zhuanz
@@ -9,6 +10,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class BaseResponse<T> {
     private T items;
     private Long total;

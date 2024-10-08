@@ -37,6 +37,6 @@ public class SysDept extends BaseEntity {
     private String address;
 
     /** 子部门 */
-//    @TableField(exist = false)
-//    private List<SysDept> children = new ArrayList<SysDept>();
+    @TableField(exist = false)
+    private List<SysDept> children = new ArrayList<SysDept>();
 }

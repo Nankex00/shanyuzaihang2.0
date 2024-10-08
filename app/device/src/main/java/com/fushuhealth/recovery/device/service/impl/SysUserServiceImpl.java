@@ -4,11 +4,14 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fushuhealth.recovery.common.constant.UserConstants;
 import com.fushuhealth.recovery.common.core.domin.SysUser;
+import com.fushuhealth.recovery.common.exception.ServiceException;
 import com.fushuhealth.recovery.common.util.StringUtils;
 import com.fushuhealth.recovery.dal.dao.SysUserMapper;
 import com.fushuhealth.recovery.dal.dao.SysUserRoleMapper;
+import com.fushuhealth.recovery.dal.entity.SysDept;
 import com.fushuhealth.recovery.dal.entity.SysUserRole;
 import com.fushuhealth.recovery.device.service.ISysUserService;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,5 +95,16 @@ public class SysUserServiceImpl implements ISysUserService {
     {
         SysUserRole sysUserRole = BeanUtil.copyProperties(user, SysUserRole.class);
         sysUserRoleMapper.insert(sysUserRole);
+    }
+
+
+    @Override
+    public Long getUserId(Long deptId) {
+        MPJLambdaWrapper<SysUser> lambdaWrapper = new MPJLambdaWrapper<>();
+        lambdaWrapper
+                .selectAll(SysUserRole.class)
+                .eq(SysUser::getDeptId,deptId)
+                .leftJoin(SysUserRole.class,SysUserRole::getUserId,SysUser::getUserId);
+        return Optional.ofNullable(sysUserMapper.selectJoinOne(SysUserRole.class, lambdaWrapper)).orElseThrow(() -> new ServiceException("数据异常,不存在对应的关联表")).getUserId();
     }
 }

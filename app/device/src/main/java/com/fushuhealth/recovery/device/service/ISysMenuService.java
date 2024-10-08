@@ -1,7 +1,9 @@
 package com.fushuhealth.recovery.device.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.fushuhealth.recovery.common.core.domin.SysMenu;
 import com.fushuhealth.recovery.dal.vo.NewRouterVo;
+import com.fushuhealth.recovery.device.model.vo.TreeSelect;
 
 import java.util.List;
 import java.util.Set;
@@ -11,7 +13,7 @@ import java.util.Set;
  * @date 2024/9/23
  */
 
-public interface ISysMenuService {
+public interface ISysMenuService extends IService<SysMenu> {
 
     /**
      * 根据角色ID查询权限
@@ -46,44 +48,48 @@ public interface ISysMenuService {
 //    public List<RouterVo> buildMenus(List<SysMenu> menus);
     public List<NewRouterVo> buildMenus(List<SysMenu> menus);
 
-//    /**
-//     * 根据用户查询系统菜单列表
-//     *
-//     * @param userId 用户ID
-//     * @return 菜单列表
-//     */
-//    public List<SysMenu> selectMenuList(Long userId);
 
-//    /**
-//     * 根据用户查询系统菜单列表
-//     *
-//     * @param menu 菜单信息
-//     * @param userId 用户ID
-//     * @return 菜单列表
-//     */
-//    public List<SysMenu> selectMenuList(SysMenu menu, Long userId);
-//
-//    /**
-//     * 根据角色ID查询菜单树信息
-//     *
-//     * @param roleId 角色ID
-//     * @return 选中菜单列表
-//     */
-//    public List<Long> selectMenuListByRoleId(Long roleId);
-//
-//    /**
-//     * 构建前端所需要下拉树结构
-//     *
-//     * @param menus 菜单列表
-//     * @return 下拉树结构列表
-//     */
-//    public List<TreeSelect> buildMenuTreeSelect(List<SysMenu> menus);
-//
-//    /**
-//     * 构建前端所需要树结构
-//     *
-//     * @param menus 菜单列表
-//     * @return 树结构列表
-//     */
-//    public List<SysMenu> buildMenuTree(List<SysMenu> menus);
+    /**
+     * 根据用户查询系统菜单列表
+     *
+     * @param userId 用户ID
+     * @return 菜单列表
+     */
+    public List<SysMenu> selectMenuList(Long userId);
+
+    /**
+     * 根据用户查询系统菜单列表
+     *
+     * @param menu 菜单信息
+     * @param userId 用户ID
+     * @return 菜单列表
+     */
+    public List<SysMenu> selectMenuList(SysMenu menu, Long userId);
+
+
+    /**
+     * 根据角色ID查询菜单树信息
+     *
+     * @param roleId 角色ID
+     * @return 选中菜单列表
+     */
+    public List<Long> selectMenuListByRoleId(Long roleId);
+
+
+    /**
+     * 构建前端所需要下拉树结构
+     *
+     * @param menus 菜单列表
+     * @return 下拉树结构列表
+     */
+    public List<TreeSelect> buildMenuTreeSelect(List<SysMenu> menus);
+
+    /**
+     * 构建前端所需要树结构
+     *
+     * @param menus 菜单列表
+     * @return 树结构列表
+     */
+    public List<SysMenu> buildMenuTree(List<SysMenu> menus);
+
 }

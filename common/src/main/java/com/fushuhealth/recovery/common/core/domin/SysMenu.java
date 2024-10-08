@@ -3,6 +3,7 @@ package com.fushuhealth.recovery.common.core.domin;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fushuhealth.recovery.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -64,6 +65,7 @@ public class SysMenu extends BaseEntity
     private String icon;
 
     /** 子菜单 */
+    @TableField(exist = false)
     private List<SysMenu> children = new ArrayList<SysMenu>();
 
 }
