@@ -19,8 +19,8 @@ public class TransferRecordListDto {
     private String operation;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date operationTime;
-    private String transferInstitutionName;
-    private String receiveInstitutionName;
+    private Long transferInstitution;
+    private Long receiveInstitution;
     private String reason;
     private String reply;
 }

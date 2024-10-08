@@ -120,7 +120,7 @@ public class RepeatFiltrateRecordServiceImpl implements IRepeatFiltrateRecordSer
                 .selectAs(SysDept::getDeptName,RepeatFiltrateListDto::getDeptName)
                 .innerJoin(RepeatFiltrateRecord.class,RepeatFiltrateRecord::getChildId,Children::getId)
                 .innerJoin(SysUser.class,SysUser::getUserId,RepeatFiltrateRecord::getOperatedId)
-                .innerJoin(SysDept.class,SysDept::getDeptId,SysUser::getUserId);
+                .innerJoin(SysDept.class,SysDept::getDeptId,SysUser::getDeptId);
         Byte type = request.getType() != null ? request.getType() : 0; // 默认值为 0，根据需要修改
         lambdaWrapper.eq(type != 0, Children::getDangerLevel, type);
         if (request.getQuery()!=null&& !request.getQuery().isEmpty()){
@@ -134,7 +134,7 @@ public class RepeatFiltrateRecordServiceImpl implements IRepeatFiltrateRecordSer
         page.getRecords().forEach(repeatFiltrateListDto -> {
             RepeatFiltrateListResponse response = BeanUtil.copyProperties(repeatFiltrateListDto,RepeatFiltrateListResponse.class);
             response.setMonthAge(MonthType.findMonthByType(repeatFiltrateListDto.getMonthAge()));
-            response.setDangerLevel(DangerLevelType.findDangerLevelByType(repeatFiltrateListDto.getDangerLevel()));
+//            response.setDangerLevel(DangerLevelType.findDangerLevelByType(repeatFiltrateListDto.getDangerLevel()));
             responses.add(response);
         });
         return new BaseResponse<List<RepeatFiltrateListResponse>>(responses, page.getTotal());

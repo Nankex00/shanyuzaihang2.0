@@ -117,7 +117,7 @@ public class EvaluateRecordServiceImpl implements IEvaluateRecordService {
                 .selectAs(SysDept::getDeptName,EvaluateRecordListDto::getDeptName)
                 .innerJoin(EvaluateRecord.class,EvaluateRecord::getChildId,Children::getId)
                 .innerJoin(SysUser.class,SysUser::getUserId,EvaluateRecord::getOperatedId)
-                .innerJoin(SysDept.class,SysDept::getDeptId,SysUser::getUserId);
+                .innerJoin(SysDept.class,SysDept::getDeptId,SysUser::getDeptId);
         if (request.getQuery()!=null&& !request.getQuery().isEmpty()){
             lambdaWrapper.like(Children::getId,request.getQuery())
                     .or()
@@ -129,7 +129,7 @@ public class EvaluateRecordServiceImpl implements IEvaluateRecordService {
         page.getRecords().forEach(evaluateRecordListDto -> {
             EvaluateRecordListResponse response = BeanUtil.copyProperties(evaluateRecordListDto,EvaluateRecordListResponse.class);
             response.setMonthAge(MonthType.findMonthByType(evaluateRecordListDto.getMonthAge()));
-            response.setDangerLevel(DangerLevelType.findDangerLevelByType(evaluateRecordListDto.getDangerLevel()));
+//            response.setDangerLevel(DangerLevelType.findDangerLevelByType(evaluateRecordListDto.getDangerLevel()));
             responses.add(response);
         });
         return new BaseResponse<List<EvaluateRecordListResponse>>(responses, page.getTotal());

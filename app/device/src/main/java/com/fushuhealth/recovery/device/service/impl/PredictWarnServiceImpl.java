@@ -75,7 +75,7 @@ public class PredictWarnServiceImpl implements IPredictWarnService {
             PredictWarnListResponse response = BeanUtil.copyProperties(predictWarnListVo,PredictWarnListResponse.class);
             response.setMonthAge(MonthType.findMonthByType(predictWarnListVo.getMonthAge()));
             response.setWarnResult(WarnResultType.findWarnResultByType(predictWarnListVo.getWarnResult()));
-            response.setDangerLevel(DangerLevelType.findDangerLevelByType(predictWarnListVo.getDangerLevel()));
+//            response.setDangerLevel(DangerLevelType.findDangerLevelByType(predictWarnListVo.getDangerLevel()));
             responses.add(response);
         });
         return new BaseResponse<List<PredictWarnListResponse>>(responses, page.getTotal());

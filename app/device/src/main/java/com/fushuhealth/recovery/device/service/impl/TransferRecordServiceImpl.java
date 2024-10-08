@@ -110,20 +110,18 @@ public class TransferRecordServiceImpl implements ITransferRecordService {
         List<TransferRecordListResponse> responses = new ArrayList<>();
         page.getRecords().forEach(transferRecordListDto -> {
             TransferRecordListResponse response = BeanUtil.copyProperties(transferRecordListDto,TransferRecordListResponse.class);
-            response.setDangerLevel(DangerLevelType.findDangerLevelByType(transferRecordListDto.getDangerLevel()));
-            MPJLambdaWrapper<SysUser> lambdaWrapper1 = new MPJLambdaWrapper<>();
+//            response.setDangerLevel(DangerLevelType.findDangerLevelByType(transferRecordListDto.getDangerLevel()));
+            MPJLambdaWrapper<SysDept> lambdaWrapper1 = new MPJLambdaWrapper<>();
             lambdaWrapper1
                     .selectAs(SysDept::getDeptName, SysDeptNameDto::getName)
-                    .eq(SysUser::getUserId,transferRecordListDto.getTransferInstitutionName())
-                    .leftJoin(SysDept.class,SysDept::getDeptId,SysUser::getDeptId);
-            SysDeptNameDto transferInstitutionName = Optional.ofNullable(sysUserMapper.selectJoinOne(SysDeptNameDto.class, lambdaWrapper1)).orElseThrow(() -> new ServiceException("数据异常，不存在对应的机构信息"));
+                    .eq(SysDept::getDeptId,transferRecordListDto.getTransferInstitution());
+            SysDeptNameDto transferInstitutionName = Optional.ofNullable(sysDeptMapper.selectJoinOne(SysDeptNameDto.class,lambdaWrapper1)).orElseThrow(() -> new ServiceException("数据异常，不存在对应的机构信息"));
             response.setTransferInstitutionName(transferInstitutionName.getName());
             MPJLambdaWrapper<SysUser> lambdaWrapper2 = new MPJLambdaWrapper<>();
-            lambdaWrapper1
+            lambdaWrapper2
                     .selectAs(SysDept::getDeptName, SysDeptNameDto::getName)
-                    .eq(SysUser::getUserId,transferRecordListDto.getReceiveInstitutionName())
-                    .leftJoin(SysDept.class,SysDept::getDeptId,SysUser::getDeptId);
-            SysDeptNameDto receiveInstitutionName = Optional.ofNullable(sysUserMapper.selectJoinOne(SysDeptNameDto.class, lambdaWrapper1)).orElseThrow(() -> new ServiceException("数据异常，不存在对应的机构信息"));
+                    .eq(SysDept::getDeptId,transferRecordListDto.getReceiveInstitution());
+            SysDeptNameDto receiveInstitutionName = Optional.ofNullable(sysDeptMapper.selectJoinOne(SysDeptNameDto.class, lambdaWrapper1)).orElseThrow(() -> new ServiceException("数据异常，不存在对应的机构信息"));
             response.setReceiveInstitutionName(receiveInstitutionName.getName());
             responses.add(response);
         });
