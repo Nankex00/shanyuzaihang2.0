@@ -20,11 +20,11 @@ public class ChildrenDetailDto{
     private Long id;
     private String name;
     private String sex;
-    private String dateOfBirth;
+    private Long dateOfBirth;
     private Integer age;
     private Integer gestationalWeeks;
     private Integer gestationalWeekDay;
-    private Integer brithWight;
+    private Integer birthWeight;
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<Integer> dangerOfChild;
     @TableField(typeHandler = JacksonTypeHandler.class)

@@ -29,11 +29,11 @@ mybatis-plus:
 recovery:
   signing-secret: 123456
 
-storage:
-  mode: local
-  local:
-    endpoint: http://www.baidu.com
-    root: /Users/tiger/Documents/klarity/storage/
+#storage:
+#  mode: local
+#  local:
+#    endpoint: http://www.baidu.com
+#    root: /Users/tiger/Documents/klarity/storage/
 
 logging:
   config: classpath:logback.xml
@@ -49,3 +49,30 @@ token:
 
 file:
   domain: https://platform-test.fushuhealth.com/platform/storage/image/
+
+scale-table:
+  file: /data/app/fushu/backend/platform_test/backend/scaleTable.json
+  result:
+    cerebralPalsyPath: /data/app/fushu/backend/platform_test/backend/result.json
+  video-mark-param: /data/app/fushu/backend/platform_test/backend/videoMarkParam.json
+  actionVideoFilePath: /data/app/fushu/backend/platform_test/backend/video.json
+
+storage:
+  mode: cloud
+  temp-storage-root: /data/app/fushu/backend/platform_test/storage/tmp/
+  outside:
+    endpoint: http://platform-test.fushuhealth.com
+  local:
+    endpoint: http://platform-test.fushuhealth.com/recovery/storage
+    root: /data/app/fushu/backend/platform/storage/
+    file-url-base: /platform/storage
+  cloud:
+    access-key: 5tWU4jx332LnEkvTlzONEFO00KdRXQApLvLQGmIc
+    secret-key: oO08CqPkhJdX7l_gV8KyFm_qpNncC9UnQptmXl6Z
+    endpoint: hz-storage.fushuhealth.com
+    bucket: fushu-hangzhou
+
+video:
+  pm3u8: pm3u8/0/expires/43200
+  wm-url: kodo://fushu-recovery/logo.jpg
+  qiniu-pipeline: recovery-video

@@ -1,42 +1,28 @@
 package com.fushuhealth.recovery.device.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.fushuhealth.recovery.common.api.AjaxResult;
-import com.fushuhealth.recovery.common.api.BaseResponse;
-import com.fushuhealth.recovery.common.storage.FileType;
-import com.fushuhealth.recovery.device.model.vo.ScaleTableVo;
-import com.fushuhealth.recovery.device.service.ScaleTableService;
+import com.fushuhealth.recovery.common.api.OldBaseResponse;
+import com.fushuhealth.recovery.dal.vo.ScaleRecordVo;
+import com.fushuhealth.recovery.device.service.ScaleRecordService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.SingletonMap;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
 @RequestMapping("/scale")
 public class ScaleRecordController {
 
-//    @Autowired
-//    private ScaleRecordService scaleRecordService;
+    @Autowired
+    private ScaleRecordService scaleRecordService;
 //
 //    @Autowired
 //    private FileService fileService;
 //
-    @Autowired
-    private ScaleTableService scaleTableService;
+//    @Autowired
+//    private ScaleTableService scaleTableService;
 //
 //    @Autowired
 //    private ScaleEvaluateLogService scaleEvaluateLogService;
@@ -84,16 +70,16 @@ public class ScaleRecordController {
 //        return BaseResponse.success();
 //    }
 //
-//    /*
-//    获取用户评测详情，包含附件
-//     */
-//    @GetMapping("/record/get")
-//    public BaseResponse getScaleRecord(@RequestParam Long id,
-//                                       @RequestParam(required = false, defaultValue = "1") byte type,
-//                                       @RequestParam(required = false, defaultValue = "0")Long fileId) {
-//        ScaleRecordVo vo = scaleRecordService.getScaleRecordVo(id, type, fileId);
-//        return BaseResponse.success(vo);
-//    }
+    /*
+    获取用户评测详情，包含附件
+     */
+    @GetMapping("/record/get")
+    public OldBaseResponse getScaleRecord(@RequestParam Long id,
+                                       @RequestParam(required = false, defaultValue = "1") byte type,
+                                       @RequestParam(required = false, defaultValue = "0")Long fileId) {
+        ScaleRecordVo vo = scaleRecordService.getScaleRecordVo(id, type, fileId);
+        return OldBaseResponse.success(vo);
+    }
 //
 //    /*
 //    医生更新用户评测的单个题目得分
@@ -238,16 +224,16 @@ public class ScaleRecordController {
 //        return BaseResponse.success();
 //    }
 //
-    /**
-     * 获取量表详情
-     * @param code
-     * @return
-     */
-    @GetMapping("/scaleTable/get")
-    public AjaxResult getScaleTable(@RequestParam(defaultValue = "0") Byte code) {
-        ScaleTableVo scaleTableVo = scaleTableService.getScaleTableVo(code);
-        return AjaxResult.success(scaleTableVo);
-    }
+//    /**
+//     * 获取量表详情
+//     * @param code
+//     * @return
+//     */
+//    @GetMapping("/scaleTable/get")
+//    public OldBaseResponse getScaleTable(@RequestParam(defaultValue = "0") Byte code) {
+//        ScaleTableVo scaleTableVo = scaleTableService.getScaleTableVo(code);
+//        return OldBaseResponse.success(scaleTableVo);
+//    }
 //
 //    /**
 //     * 更新记分册

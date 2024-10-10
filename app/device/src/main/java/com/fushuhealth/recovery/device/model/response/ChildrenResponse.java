@@ -15,7 +15,7 @@ public class ChildrenResponse {
     private Long id;
     private String name;
     private String sex;
-    private String dateOfBirth;
+    private Long dateOfBirth;
     private Integer age;
     private Byte dangerLevel;
     private String socialName;

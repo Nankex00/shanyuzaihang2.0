@@ -15,7 +15,7 @@ public class EvaluateRecordListResponse {
     private String name;
     private String sex;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private String dateOfBirth;
+    private Long dateOfBirth;
     private String dangerLevel;
     private String monthAge;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")

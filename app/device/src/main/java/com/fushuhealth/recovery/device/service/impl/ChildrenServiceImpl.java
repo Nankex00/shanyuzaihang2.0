@@ -142,5 +142,10 @@ public class ChildrenServiceImpl implements IChildrenService {
         return new BaseResponse<>(responses, childrenPage.getTotal());
     }
 
+    @Override
+    public Children getChildrenById(long id) {
+        return childrenMapper.selectById(id);
+    }
+
 
 }

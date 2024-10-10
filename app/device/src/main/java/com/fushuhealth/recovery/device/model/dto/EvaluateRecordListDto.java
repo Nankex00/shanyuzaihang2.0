@@ -13,7 +13,7 @@ public class EvaluateRecordListDto {
     private Long id;
     private String name;
     private String sex;
-    private String dateOfBirth;
+    private Long dateOfBirth;
     private Byte dangerLevel;
     private Byte monthAge;
     private Date submitTime;

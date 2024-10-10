@@ -84,4 +84,8 @@ public class AuthorityController {
         return AjaxResult.success("获取路由信息成功",menuService.buildMenus(menus));
     }
 
+    @GetMapping("/loginOut")
+    public AjaxResult loginOut(){
+        return AjaxResult.success();
+    }
 }

@@ -27,11 +27,11 @@ public class Children extends BaseEntity {
     private Long id;
     private String name;
     private String sex;
-    private String dateOfBirth;
+    private Long dateOfBirth;
     private Integer age;
     private Integer gestationalWeeks;
     private Integer gestationalWeekDay;
-    private Integer brithWight;
+    private Integer birthWeight;
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<Long> dangerOfChild;
     @TableField(typeHandler = JacksonTypeHandler.class)
@@ -42,4 +42,16 @@ public class Children extends BaseEntity {
     private String identification;
     private String socialName;
     private String deptId;
+    //新增字段
+    private String extraRisks;
+    private String medicalCardNumber;
+
+    public Long getBirthday(){
+        return this.getDateOfBirth();
+    }
+
+    public String getGender()
+    {
+        return this.sex;
+    }
 }

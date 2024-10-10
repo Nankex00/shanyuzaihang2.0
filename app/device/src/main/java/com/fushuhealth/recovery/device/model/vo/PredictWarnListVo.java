@@ -14,7 +14,7 @@ public class PredictWarnListVo {
     private Long id;
     private String name;
     private String sex;
-    private String dateOfBirth;
+    private Long dateOfBirth;
     private Byte dangerLevel;
     private Byte monthAge;
     private Byte warnResult;

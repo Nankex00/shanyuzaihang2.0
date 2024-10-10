@@ -15,7 +15,7 @@ public class ChildrenDetail extends ChildrenResponse{
     private Long deptId;
     private Integer gestationalWeeks;
     private Integer gestationalWeekDay;
-    private Integer brithWight;
+    private Integer birthWeight;
     private String dangerOfChild;
     private String dangerOfMother;
     private String diagnose;

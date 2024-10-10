@@ -36,6 +36,9 @@ public class SysUser extends BaseEntity {
 
     private String status;
 
+    //新增字段
+    private String phone;
+
     @TableField(exist = false)
     private SysRole role;
 

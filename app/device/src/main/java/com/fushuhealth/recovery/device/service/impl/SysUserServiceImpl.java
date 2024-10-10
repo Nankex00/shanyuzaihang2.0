@@ -107,4 +107,9 @@ public class SysUserServiceImpl implements ISysUserService {
                 .leftJoin(SysUserRole.class,SysUserRole::getUserId,SysUser::getUserId);
         return Optional.ofNullable(sysUserMapper.selectJoinOne(SysUserRole.class, lambdaWrapper)).orElseThrow(() -> new ServiceException("数据异常,不存在对应的关联表")).getUserId();
     }
+
+    @Override
+    public SysUser getUser(long id) {
+        return sysUserMapper.selectById(id);
+    }
 }

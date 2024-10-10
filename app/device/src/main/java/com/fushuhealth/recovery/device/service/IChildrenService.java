@@ -1,6 +1,7 @@
 package com.fushuhealth.recovery.device.service;
 
 import com.fushuhealth.recovery.common.api.BaseResponse;
+import com.fushuhealth.recovery.dal.entity.Children;
 import com.fushuhealth.recovery.device.model.request.ChildrenRequest;
 import com.fushuhealth.recovery.device.model.request.HighRiskChildrenRequest;
 import com.fushuhealth.recovery.device.model.response.ChildrenDetail;
@@ -19,4 +20,7 @@ public interface IChildrenService {
     ChildrenDetail searchDetail(Long id);
 
     BaseResponse<List<ChildrenResponse>> searchListHighRisk(HighRiskChildrenRequest request);
+
+    Children getChildrenById(long id);
+
 }

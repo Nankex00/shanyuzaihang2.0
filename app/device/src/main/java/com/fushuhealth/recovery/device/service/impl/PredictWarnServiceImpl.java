@@ -9,6 +9,7 @@ import com.fushuhealth.recovery.common.constant.DangerLevelType;
 import com.fushuhealth.recovery.common.constant.MonthType;
 import com.fushuhealth.recovery.common.constant.StatusType;
 import com.fushuhealth.recovery.common.constant.WarnResultType;
+import com.fushuhealth.recovery.common.exception.ServiceException;
 import com.fushuhealth.recovery.dal.dao.ChildrenMapper;
 import com.fushuhealth.recovery.dal.dao.PredictWarnMapper;
 import com.fushuhealth.recovery.dal.entity.Children;
@@ -71,8 +72,12 @@ public class PredictWarnServiceImpl implements IPredictWarnService {
         lambdaWrapper.orderByDesc(PredictWarn::getSubmitTime);
         childrenMapper.selectJoinPage(page,PredictWarnListVo.class, lambdaWrapper);
         List<PredictWarnListResponse> responses = new ArrayList<>();
-        page.getRecords().forEach(predictWarnListVo -> {
+        List<PredictWarnListVo> records = page.getRecords();
+        records.forEach(predictWarnListVo -> {
             PredictWarnListResponse response = BeanUtil.copyProperties(predictWarnListVo,PredictWarnListResponse.class);
+            if (predictWarnListVo.getMonthAge()==null||predictWarnListVo.getWarnResult()==null){
+                throw new ServiceException("数据异常，不存在预警记录");
+            }
             response.setMonthAge(MonthType.findMonthByType(predictWarnListVo.getMonthAge()));
             response.setWarnResult(WarnResultType.findWarnResultByType(predictWarnListVo.getWarnResult()));
 //            response.setDangerLevel(DangerLevelType.findDangerLevelByType(predictWarnListVo.getDangerLevel()));

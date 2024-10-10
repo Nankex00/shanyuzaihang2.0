@@ -43,4 +43,6 @@ public interface ISysUserService {
 
     Long getUserId(Long deptId);
 
+    SysUser getUser(long id);
+
 }

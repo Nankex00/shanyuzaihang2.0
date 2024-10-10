@@ -3,6 +3,7 @@ package com.fushuhealth.recovery.device.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fushuhealth.recovery.common.api.BaseResponse;
+import com.fushuhealth.recovery.common.util.DataTypeUtils;
 import com.fushuhealth.recovery.dal.dao.DiagnoseMapper;
 import com.fushuhealth.recovery.dal.dao.DiagnoseRecordMapper;
 import com.fushuhealth.recovery.dal.entity.DiagnoseRecord;
@@ -35,12 +36,14 @@ public class DiagnoseRecordServiceImpl implements IDiagnoseRecordService {
         StringJoiner stringJoiner2 = new StringJoiner(",");
         diagnoseRecords.forEach(diagnoseRecord -> {
             DiagnoseRecordResponse response = BeanUtil.copyProperties(diagnoseRecord,DiagnoseRecordResponse.class);
-            diagnoseRecord.getBeforeDiagnose().forEach(before->{
-                String categoryName = diagnoseMapper.selectById(before).getCategoryName();
+//            List<Long> before = DataTypeUtils.IntegerToLongTypeHandler(diagnoseRecord.getBeforeDiagnose());
+            diagnoseRecord.getBeforeDiagnose().forEach(b->{
+                String categoryName = diagnoseMapper.selectById(b).getCategoryName();
                 stringJoiner1.add(categoryName);
             });
-            diagnoseRecord.getDiagnoseDetail().forEach(detail->{
-                String categoryName = diagnoseMapper.selectById(detail).getCategoryName();
+//            List<Long> detail = DataTypeUtils.IntegerToLongTypeHandler(diagnoseRecord.getDiagnoseDetail());
+            diagnoseRecord.getDiagnoseDetail().forEach(d->{
+                String categoryName = diagnoseMapper.selectById(d).getCategoryName();
                 stringJoiner2.add(categoryName);
             });
             response.setBeforeDiagnose(stringJoiner1.toString());

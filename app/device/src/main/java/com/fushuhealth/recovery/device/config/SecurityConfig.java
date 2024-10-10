@@ -103,7 +103,10 @@ public class SecurityConfig
                 })
                 .authenticationProvider(authenticationProvider())
                 // 如果使用token这个配置是必须的
-                .addFilterBefore(authenticationTokenFilter,UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authenticationTokenFilter,UsernamePasswordAuthenticationFilter.class)
+                .logout(logout->logout.logoutUrl("/loginOut")
+                        .logoutSuccessHandler(logoutSuccessHandler)
+                );
 //                .httpBasic(Customizer.withDefaults())
 //                .formLogin(Customizer.withDefaults());
 
