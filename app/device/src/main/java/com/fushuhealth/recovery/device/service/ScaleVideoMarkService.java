@@ -12,7 +12,7 @@ public interface ScaleVideoMarkService {
 
     void deleteScaleVideoMark(long id);
 
-//    void createScaleVideoMark(long userId, List<CreateScaleVideoMarkRequest> request);
+    void createScaleVideoMark(long userId, List<CreateScaleVideoMarkRequest> request);
 
     void updateScaleVideoMark(long userId, UpdateScaleVideoMarkRequest request);
 }

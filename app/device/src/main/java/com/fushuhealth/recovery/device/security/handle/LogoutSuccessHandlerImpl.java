@@ -41,15 +41,16 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException
     {
-        LoginUser loginUser = tokenService.getLoginUser(request);
-        if (StringUtils.isNotNull(loginUser))
-        {
-            String userName = loginUser.getUsername();
+//        LoginUser loginUser = tokenService.getLoginUser(request);
+//        if (StringUtils.isNotNull(loginUser))
+//        {
+//            String userName = loginUser.getUsername();
             // 删除用户缓存记录
-            tokenService.delLoginUser(loginUser.getToken(),request);
+//            tokenService.delLoginUser(loginUser.getToken(),request);
 //            // 记录用户退出日志
 //            AsyncManager.me().execute(AsyncFactory.recordLogininfor(userName, Constants.LOGOUT, MessageUtils.message("user.logout.success")));
-        }
-        ServletUtils.renderString(response, JSON.toJSONString(AjaxResult.success(MessageUtils.message("user.logout.success"))));
+//        }
+        //todo:修改为国际化消息插件
+        ServletUtils.renderString(response, JSON.toJSONString(AjaxResult.success("登出成功")));
     }
 }

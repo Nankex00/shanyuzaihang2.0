@@ -4,6 +4,7 @@ import com.fushuhealth.recovery.common.api.OldBaseResponse;
 import com.fushuhealth.recovery.dal.vo.ScaleRecordVo;
 import com.fushuhealth.recovery.device.service.ScaleRecordService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.map.SingletonMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -91,14 +92,14 @@ public class ScaleRecordController {
 //        return BaseResponse.success();
 //    }
 //
-//    /*
-//    获取报告 pdf
-//     */
-//    @GetMapping("/record/report/preview")
-//    public BaseResponse previewReport(Long id) {
-//        String url = scaleRecordService.previewReport(id);
-//        return BaseResponse.success(new SingletonMap("url", url));
-//    }
+    /*
+    获取报告 pdf
+     */
+    @GetMapping("/record/report/preview")
+    public OldBaseResponse previewReport(Long id) {
+        String url = scaleRecordService.previewReport(id);
+        return OldBaseResponse.success(new SingletonMap("url", url));
+    }
 //
 //    @GetMapping("/report/picture")
 //    public BaseResponse getScaleEvaluationRecordReportPic(@RequestParam Long id) {

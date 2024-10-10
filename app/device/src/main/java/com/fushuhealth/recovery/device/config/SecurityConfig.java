@@ -92,7 +92,7 @@ public class SecurityConfig
 //                    authorize.requestMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html","/img/**", "/**/*.css", "/**/*.js", "/profile/**")
 //                            .permitAll();
                     authorize.requestMatchers
-                            ("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/druid/**")
+                            ("/loginOut","/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/druid/**")
                             .permitAll()
                     // 其他的都需要认证
                     .anyRequest().authenticated();

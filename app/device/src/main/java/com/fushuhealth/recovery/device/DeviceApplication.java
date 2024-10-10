@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @MapperScan("com.fushuhealth.recovery.dal.dao")
-@ComponentScan(basePackages = {"com.fushuhealth.recovery"}) // 替换为您的实际包路径
+@ComponentScan(basePackages = {"com.fushuhealth.recovery"})
 @EnableScheduling
 public class DeviceApplication {
     public static void main(String[] args) {

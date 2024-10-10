@@ -100,7 +100,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper,SysRole> imple
         lambdaQueryWrapper1.eq(SysRoleDept::getDeptId,request.getDeptId());
         Optional.ofNullable(sysRoleDeptMapper.selectOne(lambdaQueryWrapper1)).ifPresentOrElse((sysRoleDept1)->{
             LambdaUpdateWrapper<SysRoleDept> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-            lambdaUpdateWrapper.set(SysRoleDept::getRoleId,sysRole.getRoleId());
+            lambdaUpdateWrapper.set(SysRoleDept::getRoleId,sysRole.getRoleId())
+                    .eq(SysRoleDept::getDeptId,request.getDeptId());
             sysRoleDeptMapper.update(lambdaUpdateWrapper);
         },()->{
 //            SysRoleDept sysRoleDept = new SysRoleDept();
@@ -115,7 +116,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper,SysRole> imple
         lambdaQueryWrapper2.eq(SysUserRole::getUserId,userId);
         Optional.ofNullable(sysUserRoleMapper.selectOne(lambdaQueryWrapper2)).ifPresentOrElse((sysUserRole)->{
             LambdaUpdateWrapper<SysUserRole> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-            lambdaUpdateWrapper.set(SysUserRole::getRoleId,sysRole.getRoleId());
+            lambdaUpdateWrapper.set(SysUserRole::getRoleId,sysRole.getRoleId())
+                    .eq(SysUserRole::getUserId,userId);
             sysUserRoleMapper.update(lambdaUpdateWrapper);
         },()->{
 //            SysUserRole sysUserRole = new SysUserRole();

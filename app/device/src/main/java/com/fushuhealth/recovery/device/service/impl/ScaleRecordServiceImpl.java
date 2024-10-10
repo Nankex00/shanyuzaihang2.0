@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fushuhealth.recovery.common.api.ResultCode;
-import com.fushuhealth.recovery.common.constant.Gender;
-import com.fushuhealth.recovery.common.constant.QuestionSubjectEnum;
-import com.fushuhealth.recovery.common.constant.ScaleStatus;
-import com.fushuhealth.recovery.common.constant.ScaleTableConstant;
+import com.fushuhealth.recovery.common.constant.*;
 import com.fushuhealth.recovery.common.core.domin.SysUser;
 import com.fushuhealth.recovery.common.exception.OldServiceException;
 import com.fushuhealth.recovery.common.storage.OldFileType;
@@ -23,6 +20,7 @@ import com.fushuhealth.recovery.dal.scale.ScaleTableResolver;
 import com.fushuhealth.recovery.dal.vo.*;
 import com.fushuhealth.recovery.device.service.*;
 import jakarta.annotation.PostConstruct;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -612,14 +610,14 @@ public class ScaleRecordServiceImpl extends ServiceImpl<ScaleEvaluationRecordDao
 
     }
 //
-//    @Override
-//    public ScaleEvaluationRecord getScaleEvaluationRecord(long id) {
-//        ScaleEvaluationRecord scaleEvaluationRecord = scaleEvaluationRecordDao.selectById(id);
-//        if (scaleEvaluationRecord == null) {
-//            throw new ServiceException(ResultCode.PARAM_ERROR);
-//        }
-//        return scaleEvaluationRecord;
-//    }
+    @Override
+    public ScaleEvaluationRecord getScaleEvaluationRecord(long id) {
+        ScaleEvaluationRecord scaleEvaluationRecord = scaleEvaluationRecordDao.selectById(id);
+        if (scaleEvaluationRecord == null) {
+            throw new OldServiceException(ResultCode.PARAM_ERROR);
+        }
+        return scaleEvaluationRecord;
+    }
 //
     private ScaleRecordVo getScaleRecordVo(byte type, ScaleEvaluationRecord record, Children children, ScaleTable scaleTable, long fileId) {
         if (type == 1) {
@@ -1320,71 +1318,72 @@ public class ScaleRecordServiceImpl extends ServiceImpl<ScaleEvaluationRecordDao
 //        }
 //    }
 //
-//    @Override
-//    public String previewReport(Long id) {
-//        ScaleEvaluationRecord scaleEvaluationRecord = getScaleEvaluationRecord(id);
-//        if (scaleEvaluationRecord == null) {
-//            throw new ServiceException(ResultCode.PARAM_ERROR);
-//        }
-//        if (ScaleTableConstant.ScaleTableCode.LEIBO_BODY_GMS.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
-//                ScaleTableConstant.ScaleTableCode.LEIBO_CEREBRAL_SELF.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
-//                ScaleTableConstant.ScaleTableCode.GRIFFITHS.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
-//                ScaleTableConstant.ScaleTableCode.GMFM88.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
-//                ScaleTableConstant.ScaleTableCode.CAREGIVER_BURDEN.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
-//                ScaleTableConstant.ScaleTableCode.GMS_8.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
-//                ScaleTableConstant.ScaleTableCode.GMS.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
-//                ScaleTableConstant.ScaleTableCode.WEISHI_TODDLER_INTELLIGENCE.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
-//                ScaleTableConstant.ScaleTableCode.WEISHI_CHILD_INTELLIGENCE.getCode() != scaleEvaluationRecord.getScaleTableCode()) {
-//            throw new ServiceException(ResultCode.UNSUPPORTED_SCALE_CODE);
-//        }
-//
-//        Map<Byte, ScaleTable> scaleTableMap = ScaleTableResolver.getScaleTableMap();
-//        ScaleTable scaleTable = scaleTableMap.get(scaleEvaluationRecord.getScaleTableCode());
-//        if (scaleTable == null) {
-//            return null;
-//        }
-//
-//        Children children = childrenService.getChildrenById(scaleEvaluationRecord.getChildrenId());
-//        BaseScaleEvaluationResult report = getReport(scaleEvaluationRecord, children);
-//
-//        ScaleRecordReportVo vo = new ScaleRecordReportVo();
-//        vo.setUserId(scaleEvaluationRecord.getUserId());
-//        vo.setAge(DateUtil.getAge(children.getBirthday()));
-//        vo.setBirthday(DateUtil.getYMD(children.getBirthday()));
-//        vo.setName(children.getName());
-//        vo.setGender(Gender.getGender(children.getGender()).getDesc());
-//        vo.setBirthdayWeight(children.getBirthWeight());
-//        vo.setGestationalWeek(children.getGestationalWeek() + "周" + children.getGestationalWeekDay() + "天");
-//        vo.setCreated(DateUtil.getYMDHMSDate(scaleEvaluationRecord.getCreated()));
-//        vo.setDoctorScore(scaleEvaluationRecord.getDoctorScore());
-//        vo.setId(scaleEvaluationRecord.getId());
-//        vo.setProgressStatus(ScaleStatus.getStatus(scaleEvaluationRecord.getProgressStatus()).getDesc());
-//        vo.setProgressStatusCode(scaleEvaluationRecord.getProgressStatus());
-//        vo.setScaleTableName(scaleTable.getName());
-//        vo.setScaleTableCode(scaleTable.getCode());
-//        vo.setUserScore(scaleEvaluationRecord.getUserScore());
-//        vo.setConclusion(scaleEvaluationRecord.getConclusion());
-//        vo.setEvaluateDate(DateUtil.getYMDHMDate(scaleEvaluationRecord.getUpdated()));
-//        vo.setMonthAge((int)(scaleEvaluationRecord.getCreated() - children.getBirthday()) / 60 / 60 / 24 / 30);
-//        vo.setScaleResult(report);
-//        vo.setAbnormalVideos(report.getAbnormalVideoNames());
-//        vo.setBigMoveVideos(report.getBigMoveVideoNames());
-//
-//        AnswerWithRemarkDto answerWithRemarkDto = null;
-//        String answerWithRemark = scaleEvaluationRecord.getAnswerWithRemark();
-//        List<AnswerWithRemarkDto> answerWithRemarkDtos = JSON.parseArray(answerWithRemark, AnswerWithRemarkDto.class);
-//        if (CollectionUtils.isNotEmpty(answerWithRemarkDtos) && answerWithRemarkDtos.size() >= 3) {
-//            answerWithRemarkDto = answerWithRemarkDtos.get(2);
-//        }
-//        vo.setBigMovement(getBigMovement(answerWithRemarkDto, scaleTable.getQuestions().size() >= 3 ? scaleTable.getQuestions().get(2) : null));
-//
+    @Override
+    public String previewReport(Long id) {
+        ScaleEvaluationRecord scaleEvaluationRecord = getScaleEvaluationRecord(id);
+        if (scaleEvaluationRecord == null) {
+            throw new OldServiceException(ResultCode.PARAM_ERROR);
+        }
+        if (ScaleTableConstant.ScaleTableCode.LEIBO_BODY_GMS.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
+                ScaleTableConstant.ScaleTableCode.LEIBO_CEREBRAL_SELF.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
+                ScaleTableConstant.ScaleTableCode.GRIFFITHS.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
+                ScaleTableConstant.ScaleTableCode.GMFM88.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
+                ScaleTableConstant.ScaleTableCode.CAREGIVER_BURDEN.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
+                ScaleTableConstant.ScaleTableCode.GMS_8.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
+                ScaleTableConstant.ScaleTableCode.GMS.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
+                ScaleTableConstant.ScaleTableCode.WEISHI_TODDLER_INTELLIGENCE.getCode() != scaleEvaluationRecord.getScaleTableCode() &&
+                ScaleTableConstant.ScaleTableCode.WEISHI_CHILD_INTELLIGENCE.getCode() != scaleEvaluationRecord.getScaleTableCode()) {
+            throw new OldServiceException(ResultCode.UNSUPPORTED_SCALE_CODE);
+        }
+
+        Map<Byte, ScaleTable> scaleTableMap = ScaleTableResolver.getScaleTableMap();
+        ScaleTable scaleTable = scaleTableMap.get(scaleEvaluationRecord.getScaleTableCode());
+        if (scaleTable == null) {
+            return null;
+        }
+
+        Children children = childrenService.getChildrenById(scaleEvaluationRecord.getChildrenId());
+        BaseScaleEvaluationResult report = getReport(scaleEvaluationRecord, children);
+
+        ScaleRecordReportVo vo = new ScaleRecordReportVo();
+        vo.setUserId(scaleEvaluationRecord.getUserId());
+        vo.setAge(OldDateUtil.getAge(children.getBirthday()));
+        vo.setBirthday(DateUtil.getYMD(children.getBirthday()));
+        vo.setName(children.getName());
+        vo.setGender(Gender.getGender(children.getGender()).getDesc());
+        vo.setBirthdayWeight(children.getBirthWeight());
+        vo.setGestationalWeek(children.getGestationalWeeks() + "周" + children.getGestationalWeekDay() + "天");
+        vo.setCreated(DateUtil.getYMDHMSDate(scaleEvaluationRecord.getCreated()));
+        vo.setDoctorScore(scaleEvaluationRecord.getDoctorScore());
+        vo.setId(scaleEvaluationRecord.getId());
+        vo.setProgressStatus(ScaleStatus.getStatus(scaleEvaluationRecord.getProgressStatus()).getDesc());
+        vo.setProgressStatusCode(scaleEvaluationRecord.getProgressStatus());
+        vo.setScaleTableName(scaleTable.getName());
+        vo.setScaleTableCode(scaleTable.getCode());
+        vo.setUserScore(scaleEvaluationRecord.getUserScore());
+        vo.setConclusion(scaleEvaluationRecord.getConclusion());
+        vo.setEvaluateDate(DateUtil.getYMDHMDate(scaleEvaluationRecord.getUpdated()));
+        vo.setMonthAge((int)(scaleEvaluationRecord.getCreated() - children.getBirthday()) / 60 / 60 / 24 / 30);
+        vo.setScaleResult(report);
+        vo.setAbnormalVideos(report.getAbnormalVideoNames());
+        vo.setBigMoveVideos(report.getBigMoveVideoNames());
+
+        AnswerWithRemarkDto answerWithRemarkDto = null;
+        String answerWithRemark = scaleEvaluationRecord.getAnswerWithRemark();
+        List<AnswerWithRemarkDto> answerWithRemarkDtos = JSON.parseArray(answerWithRemark, AnswerWithRemarkDto.class);
+        if (CollectionUtils.isNotEmpty(answerWithRemarkDtos) && answerWithRemarkDtos.size() >= 3) {
+            answerWithRemarkDto = answerWithRemarkDtos.get(2);
+        }
+        vo.setBigMovement(getBigMovement(answerWithRemarkDto, scaleTable.getQuestions().size() >= 3 ? scaleTable.getQuestions().get(2) : null));
+
+        //todo:需求需要重构
 //        DoctorVo doctorVo = doctorService.getDoctorVo(scaleEvaluationRecord.getDoctorId());
 //        if (doctorVo != null) {
 //            vo.setDoctorName(doctorVo.getName());
 //        }
 //
-//        try {
-//            File tempFile = fileService.getTempFile();
+        try {
+            File tempFile = fileService.getTempFile();
 //            List<ScaleEvaluateLogListVo> scaleEvaluateLogListVos = scaleEvaluateLogService.listScaleEvaluateLogByScaleRecordId(scaleEvaluationRecord.getId());
 //
 //            EvaluateLogVo evaluateLogVo = new EvaluateLogVo();
@@ -1402,39 +1401,39 @@ public class ScaleRecordServiceImpl extends ServiceImpl<ScaleEvaluationRecordDao
 //            OrganizationVo organizationVo = organizationService.getOrganizationVo(AuthContext.getUser().getOrganizationId());
 //            ReportType reportType = ReportType.getReportType(organizationVo.getReportType());
 //            reportInfo.generateReport(vo, tempFile, scaleTable, answerWithRemarkDtos, evaluateLogVo, reportType);
-//
-////            File addWaterMarkFile = fileService.getTempFile();
-//
-//            //增加当前用户的机构名作为 PDF 的水印
-////            String organizationName = AuthContext.getUser().getOrganizationName();
-////            pdfAddWaterMark(tempFile, addWaterMarkFile, organizationName);
-//
-//            String fileName = vo.getScaleTableName() + "-" + vo.getId() + DateUtil.getNowYMDHMS() + ".pdf";
-//            String filePath = fileService.saveFile(FileType.PDF, tempFile, fileName);
-//
-//            Files files = new Files();
-//            files.setStatus(BaseStatus.NORMAL.getStatus());
-//            files.setRawName(fileName);
-//            files.setOriginalName(fileName);
-//            files.setFileType(FileType.PDF.getCode());
-//            files.setCreated(DateUtil.getCurrentTimeStamp());
-//            files.setFileSize(tempFile.getTotalSpace());
-//            files.setFilePath(filePath);
-//            files.setExtension(FilenameUtils.getExtension(fileName));
-//            files.setUpdated(DateUtil.getCurrentTimeStamp());
-//            fileService.insertFiles(files);
-//
-//            scaleEvaluationRecord.setResultFileId(files.getId());
-//            //新生成 pdf 时清空之前的 pdf 图片
-//            scaleEvaluationRecord.setResultPics("");
-//            scaleEvaluationRecordDao.updateById(scaleEvaluationRecord);
-//
-//            return fileService.getFileUrl(scaleEvaluationRecord.getResultFileId(), true);
-//        } catch (Exception e) {
-//            log.error("生成 PDF 报告失败，{}", e);
-//        }
-//        return "";
-//    }
+
+//            File addWaterMarkFile = fileService.getTempFile();
+
+            //增加当前用户的机构名作为 PDF 的水印
+//            String organizationName = AuthContext.getUser().getOrganizationName();
+//            pdfAddWaterMark(tempFile, addWaterMarkFile, organizationName);
+
+            String fileName = vo.getScaleTableName() + "-" + vo.getId() + DateUtil.getNowYMDHMS() + ".pdf";
+            String filePath = fileService.saveFile(OldFileType.PDF, tempFile, fileName);
+
+            Files files = new Files();
+            files.setStatus(BaseStatus.NORMAL.getStatus());
+            files.setRawName(fileName);
+            files.setOriginalName(fileName);
+            files.setFileType(OldFileType.PDF.getCode());
+            files.setCreated(DateUtil.getCurrentTimeStamp());
+            files.setFileSize(tempFile.getTotalSpace());
+            files.setFilePath(filePath);
+            files.setExtension(FilenameUtils.getExtension(fileName));
+            files.setUpdated(DateUtil.getCurrentTimeStamp());
+            fileService.insertFiles(files);
+
+            scaleEvaluationRecord.setResultFileId(files.getId());
+            //新生成 pdf 时清空之前的 pdf 图片
+            scaleEvaluationRecord.setResultPics("");
+            scaleEvaluationRecordDao.updateById(scaleEvaluationRecord);
+
+            return fileService.getFileUrl(scaleEvaluationRecord.getResultFileId(), true);
+        } catch (Exception e) {
+            log.error("生成 PDF 报告失败，{}", e);
+        }
+        return "";
+    }
 //
 //    @Override
 //    public List<String> getReportPic(Long id) {
@@ -2344,23 +2343,23 @@ public class ScaleRecordServiceImpl extends ServiceImpl<ScaleEvaluationRecordDao
 //        return vo;
 //    }
 //
-//    private List<String> getBigMovement(AnswerWithRemarkDto answer, QuestionDto questionDto) {
-//        if (answer == null || StringUtils.isBlank(answer.getOptionSn()) || questionDto == null) {
-//            return Collections.EMPTY_LIST;
-//        }
-//        ArrayList<String> strings = new ArrayList<>();
-//        String[] split = answer.getOptionSn().split(",");
-//        List<Option> options = questionDto.getOptions();
-//        for (String s : split) {
-//            int i = Integer.parseInt(s);
-//            for (Option option : options) {
-//                if (i == option.getSn()) {
-//                    strings.add(option.getContent());
-//                }
-//            }
-//        }
-//        return strings;
-//    }
+    private List<String> getBigMovement(AnswerWithRemarkDto answer, QuestionDto questionDto) {
+        if (answer == null || StringUtils.isBlank(answer.getOptionSn()) || questionDto == null) {
+            return Collections.EMPTY_LIST;
+        }
+        ArrayList<String> strings = new ArrayList<>();
+        String[] split = answer.getOptionSn().split(",");
+        List<Option> options = questionDto.getOptions();
+        for (String s : split) {
+            int i = Integer.parseInt(s);
+            for (Option option : options) {
+                if (i == option.getSn()) {
+                    strings.add(option.getContent());
+                }
+            }
+        }
+        return strings;
+    }
 //
 //    private RecoveryGuideListVo convert2RecoveryGuideListVo(ScaleEvaluationRecord record) {
 //        RecoveryGuideListVo vo = new RecoveryGuideListVo();

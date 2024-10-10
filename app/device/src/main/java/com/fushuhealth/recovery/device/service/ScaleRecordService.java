@@ -13,13 +13,13 @@ public interface ScaleRecordService extends IService<ScaleEvaluationRecord> {
 
     ScaleRecordVo getScaleRecordVo(long id, byte type, long fileId);
 
-//    ScaleEvaluationRecord getScaleEvaluationRecord(long id);
+    ScaleEvaluationRecord getScaleEvaluationRecord(long id);
 //
 //    void updateScaleAnswerScore(LoginVo user, UpdateScaleRecordAnswerScoreRequest request);
 //
 //    void updateScaleRemark(LoginVo user, String request);
 //
-//    String previewReport(Long id);
+    String previewReport(Long id);
 //
 //    List<String> getReportPic(Long id);
 //

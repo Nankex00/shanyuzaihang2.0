@@ -7,12 +7,16 @@ import com.fushuhealth.recovery.common.api.ResultCode;
 import com.fushuhealth.recovery.common.exception.OldServiceException;
 import com.fushuhealth.recovery.common.util.DateUtil;
 import com.fushuhealth.recovery.dal.dao.ScaleVideoMarkDao;
+import com.fushuhealth.recovery.dal.entity.ScaleEvaluationRecord;
 import com.fushuhealth.recovery.dal.entity.ScaleVideoMark;
+import com.fushuhealth.recovery.device.model.request.CreateScaleVideoMarkRequest;
 import com.fushuhealth.recovery.device.model.request.UpdateScaleVideoMarkRequest;
 import com.fushuhealth.recovery.device.model.response.ListScaleVideoMarkResponse;
 import com.fushuhealth.recovery.device.model.vo.PageVo;
+import com.fushuhealth.recovery.device.service.ScaleRecordService;
 import com.fushuhealth.recovery.device.service.ScaleVideoMarkService;
 import com.fushuhealth.recovery.web.model.vo.ScaleVideoMarkListVo;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +29,8 @@ public class ScaleVideoMarkServiceImpl implements ScaleVideoMarkService {
     @Autowired
     private ScaleVideoMarkDao scaleVideoMarkDao;
 
-//    @Autowired
-//    private ScaleRecordService scaleRecordService;
+    @Autowired
+    private ScaleRecordService scaleRecordService;
 
     @Override
     public ListScaleVideoMarkResponse listScaleVideoMarks(int pageNo, int pageSize, long recordId, int questionId, long fileId) {
@@ -53,39 +57,39 @@ public class ScaleVideoMarkServiceImpl implements ScaleVideoMarkService {
         scaleVideoMarkDao.updateById(scaleVideoMark);
     }
 
-//    @Override
-//    public void createScaleVideoMark(long userId, List<CreateScaleVideoMarkRequest> request) {
-//        if (CollectionUtils.isNotEmpty(request)) {
-//            CreateScaleVideoMarkRequest markRequest = request.get(0);
-//            ScaleEvaluationRecord scaleEvaluationRecord = scaleRecordService.getScaleEvaluationRecord(markRequest.getRecordId());
-//            for (CreateScaleVideoMarkRequest rq : request) {
-//                if (rq.getId() == 0) {
-//                    ScaleVideoMark mark = new ScaleVideoMark();
-//                    mark.setUpdated(DateUtil.getCurrentTimeStamp());
-//                    mark.setStatus(BaseStatus.NORMAL.getStatus());
-//                    mark.setCreated(DateUtil.getCurrentTimeStamp());
-//                    mark.setDoctorId(userId);
-//                    mark.setEndTime(rq.getEndTime());
-//                    mark.setRecordId(scaleEvaluationRecord.getId());
-//                    mark.setScaleQuestionSn(rq.getQuestionId());
-//                    mark.setFileId(rq.getFileId());
-//                    mark.setSource((byte) 1);
-//                    mark.setScaleTableCode(scaleEvaluationRecord.getScaleTableCode());
-//                    mark.setStartTime(rq.getStartTime());
-//                    mark.setTag(rq.getTag());
-//                    scaleVideoMarkDao.insert(mark);
-//                } else {
-//                    ScaleVideoMark scaleVideoMark = getScaleVideoMark(rq.getId());
-//                    scaleVideoMark.setUpdated(DateUtil.getCurrentTimeStamp());
-//                    scaleVideoMark.setEndTime(rq.getEndTime());
-//                    scaleVideoMark.setScaleTableCode(scaleEvaluationRecord.getScaleTableCode());
-//                    scaleVideoMark.setStartTime(rq.getStartTime());
-//                    scaleVideoMark.setTag(rq.getTag());
-//                    scaleVideoMarkDao.updateById(scaleVideoMark);
-//                }
-//            }
-//        }
-//    }
+    @Override
+    public void createScaleVideoMark(long userId, List<CreateScaleVideoMarkRequest> request) {
+        if (CollectionUtils.isNotEmpty(request)) {
+            CreateScaleVideoMarkRequest markRequest = request.get(0);
+            ScaleEvaluationRecord scaleEvaluationRecord = scaleRecordService.getScaleEvaluationRecord(markRequest.getRecordId());
+            for (CreateScaleVideoMarkRequest rq : request) {
+                if (rq.getId() == 0) {
+                    ScaleVideoMark mark = new ScaleVideoMark();
+                    mark.setUpdated(DateUtil.getCurrentTimeStamp());
+                    mark.setStatus(BaseStatus.NORMAL.getStatus());
+                    mark.setCreated(DateUtil.getCurrentTimeStamp());
+                    mark.setDoctorId(userId);
+                    mark.setEndTime(rq.getEndTime());
+                    mark.setRecordId(scaleEvaluationRecord.getId());
+                    mark.setScaleQuestionSn(rq.getQuestionId());
+                    mark.setFileId(rq.getFileId());
+                    mark.setSource((byte) 1);
+                    mark.setScaleTableCode(scaleEvaluationRecord.getScaleTableCode());
+                    mark.setStartTime(rq.getStartTime());
+                    mark.setTag(rq.getTag());
+                    scaleVideoMarkDao.insert(mark);
+                } else {
+                    ScaleVideoMark scaleVideoMark = getScaleVideoMark(rq.getId());
+                    scaleVideoMark.setUpdated(DateUtil.getCurrentTimeStamp());
+                    scaleVideoMark.setEndTime(rq.getEndTime());
+                    scaleVideoMark.setScaleTableCode(scaleEvaluationRecord.getScaleTableCode());
+                    scaleVideoMark.setStartTime(rq.getStartTime());
+                    scaleVideoMark.setTag(rq.getTag());
+                    scaleVideoMarkDao.updateById(scaleVideoMark);
+                }
+            }
+        }
+    }
 
     @Override
     public void updateScaleVideoMark(long userId, UpdateScaleVideoMarkRequest request) {
