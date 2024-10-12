@@ -42,9 +42,20 @@ public class Children extends BaseEntity {
     private String identification;
     private String socialName;
     private String deptId;
-    //新增字段
+    //以下均为新增字段
     private String extraRisks;
     private String medicalCardNumber;
+    private String contactPhone;
+    //胎次：头胎，二胎及多胎
+    private String parity;
+    //窒息情况：无，Apgar评分=1min，Apgar评分=5min，不详
+    private String asphyxia;
+    //听力筛查：通过，未通过，未筛查，不详
+    private String hearingScreening;
+    //畸形情况，非必填
+    private String deformity;
+    //喂养方式:纯母乳，混合喂养，人工
+    private String feedingWay;
 
     public Long getBirthday(){
         return this.getDateOfBirth();

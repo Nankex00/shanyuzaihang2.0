@@ -1,6 +1,7 @@
 package com.fushuhealth.recovery.device.service;
 
 
+import com.fushuhealth.recovery.dal.vo.TrainingActionRecordResultVo;
 import com.fushuhealth.recovery.dal.vo.TrainingResultVo;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public interface TrainingRecordResultService {
 //
 //    TrainingRecordResultPlanVo getResultByPlanId(long planId, long day);
 //
-//    List<TrainingActionRecordResultVo> listResultByRecordId(long recordId);
+    List<TrainingActionRecordResultVo> listResultByRecordId(long recordId);
 //
 //    List<TrainingRecordResult> listResultByActionRecordId(long actionRecordId);
 //

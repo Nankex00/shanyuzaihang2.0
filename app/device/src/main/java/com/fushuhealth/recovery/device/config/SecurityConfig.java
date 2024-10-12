@@ -87,7 +87,7 @@ public class SecurityConfig
                 .authorizeHttpRequests(authorize -> {
                     // 放开哪些接口
                         authorize
-                            .requestMatchers(HttpMethod.POST,"/login")
+                            .requestMatchers(HttpMethod.POST,"/login","/h5/sms/**","/h5/login")
                             .permitAll();
 //                    authorize.requestMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html","/img/**", "/**/*.css", "/**/*.js", "/profile/**")
 //                            .permitAll();

@@ -109,10 +109,10 @@ public class ScaleRecordServiceImpl extends ServiceImpl<ScaleEvaluationRecordDao
 //
     private static String resultFilePath;
 //
-//    @Value("${scale-table.result.cerebralPalsyPath:}")
-//    public void setResultFilePath(String filePath) {
-//        resultFilePath = filePath;
-//    }
+    @Value("${scale-table.result.cerebralPalsyPath:}")
+    public void setResultFilePath(String filePath) {
+        resultFilePath = filePath;
+    }
 //
     private static String abnormalVideoFilePath;
 
@@ -492,8 +492,8 @@ public class ScaleRecordServiceImpl extends ServiceImpl<ScaleEvaluationRecordDao
             vo.setBirthWeight(children.getBirthWeight());
             vo.setExtraRisks(children.getExtraRisks());
             vo.setMedicalNumber(children.getMedicalCardNumber());
-            vo.setChildRisks(Arrays.asList(risksService.RisksExChanged(children.getDangerOfChild()).split(",")));
-            vo.setMotherRisks(Arrays.asList(risksService.RisksExChanged(children.getDangerOfMother()).split(",")));
+            vo.setChildRisks(Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.CHILD_RISK.getType()).split(",")));
+            vo.setMotherRisks(Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.MOTHER_RISK.getType()).split(",")));
             vo.setExtraRisks(children.getExtraRisks());
             String correctAge = "";
             long week = 0;
@@ -600,8 +600,8 @@ public class ScaleRecordServiceImpl extends ServiceImpl<ScaleEvaluationRecordDao
             vo.setScaleTableName(scaleTable.getName());
             vo.setUserId(record.getUserId());
             vo.setConclusion(record.getConclusion());
-            vo.setChildRisks(Arrays.asList(risksService.RisksExChanged(children.getDangerOfChild()).split(",")));
-            vo.setMotherRisks(Arrays.asList(risksService.RisksExChanged(children.getDangerOfMother()).split(",")));
+            vo.setChildRisks(Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.CHILD_RISK.getType()).split(",")));
+            vo.setMotherRisks(Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.MOTHER_RISK.getType()).split(",")));
             vo.setExtraRisks(children.getExtraRisks());
             vo.setMedicalNumber(children.getMedicalCardNumber());
             addAnswers(vo, scaleTable, record);
@@ -674,8 +674,8 @@ public class ScaleRecordServiceImpl extends ServiceImpl<ScaleEvaluationRecordDao
                 }
             }
 
-            vo.setChildRisks(Arrays.asList(risksService.RisksExChanged(children.getDangerOfChild()).split(",")));
-            vo.setMotherRisks(Arrays.asList(risksService.RisksExChanged(children.getDangerOfMother()).split(",")));
+            vo.setChildRisks(Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.CHILD_RISK.getType()).split(",")));
+            vo.setMotherRisks(Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.MOTHER_RISK.getType()).split(",")));
             vo.setExtraRisks(children.getExtraRisks());
             vo.setChildrenId(children.getId());
             vo.setCreated(DateUtil.getYMDHMSDate(record.getCreated()));
@@ -762,8 +762,8 @@ public class ScaleRecordServiceImpl extends ServiceImpl<ScaleEvaluationRecordDao
             }
 
             vo.setBirthWeight(children.getBirthWeight());
-            vo.setChildRisks(Arrays.asList(risksService.RisksExChanged(children.getDangerOfChild()).split(",")));
-            vo.setMotherRisks(Arrays.asList(risksService.RisksExChanged(children.getDangerOfMother()).split(",")));
+            vo.setChildRisks(Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.CHILD_RISK.getType()).split(",")));
+            vo.setMotherRisks(Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.MOTHER_RISK.getType()).split(",")));
             vo.setExtraRisks(children.getExtraRisks());
             String correctAge = "";
             long week = 0;
@@ -2769,14 +2769,14 @@ public class ScaleRecordServiceImpl extends ServiceImpl<ScaleEvaluationRecordDao
                 leiBoCerebralPalsySelfTestResult = new LeiBoCerebralPalsySelfTestResult();
             }
 
-            List<String> motherRisks = StringUtils.isNotBlank(risksService.RisksExChanged(children.getDangerOfMother())) ?
-                    Arrays.asList(risksService.RisksExChanged(children.getDangerOfMother()).split(",")) : new ArrayList<>();
+            List<String> motherRisks = StringUtils.isNotBlank(risksService.RisksExChanged(children.getId(),RiskType.MOTHER_RISK.getType())) ?
+                    Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.MOTHER_RISK.getType()).split(",")) : new ArrayList<>();
             List<String> risks = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(motherRisks)) {
                 risks.addAll(motherRisks);
             }
-            List<String> childRisks = StringUtils.isNotBlank(risksService.RisksExChanged(children.getDangerOfChild())) ?
-                    Arrays.asList(risksService.RisksExChanged(children.getDangerOfChild()).split(",")) : new ArrayList<>();
+            List<String> childRisks = StringUtils.isNotBlank(risksService.RisksExChanged(children.getId(),RiskType.CHILD_RISK.getType())) ?
+                    Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.CHILD_RISK.getType()).split(",")) : new ArrayList<>();
             if (CollectionUtils.isNotEmpty(childRisks)) {
                 risks.addAll(childRisks);
             }
@@ -2812,14 +2812,14 @@ public class ScaleRecordServiceImpl extends ServiceImpl<ScaleEvaluationRecordDao
             if (leiBoCerebralPalsySelfTestResult == null) {
                 leiBoCerebralPalsySelfTestResult = new LeiBoCerebralPalsySelfTestResult();
             }
-            List<String> motherRisks = StringUtils.isNotBlank(risksService.RisksExChanged(children.getDangerOfMother())) ?
-                    Arrays.asList(risksService.RisksExChanged(children.getDangerOfMother()).split(",")) : new ArrayList<>();
+            List<String> motherRisks = StringUtils.isNotBlank(risksService.RisksExChanged(children.getId(),RiskType.MOTHER_RISK.getType())) ?
+                    Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.MOTHER_RISK.getType()).split(",")) : new ArrayList<>();
             List<String> risks = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(motherRisks)) {
                 risks.addAll(motherRisks);
             }
-            List<String> childRisks = StringUtils.isNotBlank(risksService.RisksExChanged(children.getDangerOfChild())) ?
-                    Arrays.asList(risksService.RisksExChanged(children.getDangerOfChild()).split(",")) : new ArrayList<>();
+            List<String> childRisks = StringUtils.isNotBlank(risksService.RisksExChanged(children.getId(),RiskType.CHILD_RISK.getType())) ?
+                    Arrays.asList(risksService.RisksExChanged(children.getId(),RiskType.CHILD_RISK.getType()).split(",")) : new ArrayList<>();
             if (CollectionUtils.isNotEmpty(childRisks)) {
                 risks.addAll(childRisks);
             }

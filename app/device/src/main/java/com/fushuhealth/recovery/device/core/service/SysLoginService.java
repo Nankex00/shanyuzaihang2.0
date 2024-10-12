@@ -46,8 +46,6 @@ public class SysLoginService {
      */
     public String login(String username, String password, String code, String uuid, HttpServletRequest request)
     {
-        // 验证码校验
-//        validateCaptcha(username, code, uuid);
         // 登录前置校验
         loginPreCheck(username, password);
         // 用户验证
@@ -84,16 +82,17 @@ public class SysLoginService {
         return tokenService.createToken(loginUser,request);
     }
 
-//    /**
-//     * 校验验证码
-//     *
-//     * @param username 用户名
-//     * @param code 验证码
-//     * @param uuid 唯一标识
-//     * @return 结果
-//     */
-//    public void validateCaptcha(String username, String code, String uuid)
-//    {
+    /**
+     * 校验验证码
+     *
+     * @param username 用户名
+     * @param code 验证码
+     * @param uuid 唯一标识
+     * @return 结果
+     */
+    public void validateCaptcha(String username, String code, String uuid,HttpServletRequest request)
+    {
+        String message = (String) request.getSession().getAttribute(username);
 //        boolean captchaEnabled = configService.selectCaptchaEnabled();
 //        if (captchaEnabled)
 //        {
@@ -111,7 +110,8 @@ public class SysLoginService {
 //                throw new CaptchaException();
 //            }
 //        }
-//    }
+
+    }
 
     /**
      * 登录前置校验
@@ -161,5 +161,51 @@ public class SysLoginService {
 //        sysUser.setLoginIp(IpUtils.getIpAddr());
 //        sysUser.setLoginDate(DateUtils.getNowDate());
 //        userService.updateUserProfile(sysUser);
+    }
+
+    /**
+     * 登录验证
+     *
+     * @param username 用户名
+     * @param code 验证码
+     * @param uuid 唯一标识
+     * @return 结果
+     */
+    public String login(String username, String code, String uuid, HttpServletRequest request)
+    {
+        // 验证码校验
+        validateCaptcha(username, code, uuid,request);
+        // 用户验证
+        Authentication authentication = null;
+        try
+        {
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null);
+            AuthenticationContextHolder.setContext(authenticationToken);
+//             该方法会去调用UserDetailsServiceImpl.loadUserByUsername
+            authentication = authenticationManager.authenticate(authenticationToken);
+        }
+        catch (Exception e)
+        {
+            if (e instanceof BadCredentialsException)
+            {
+//                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
+                throw new UserPasswordNotMatchException();
+            }
+            else
+            {
+//                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, e.getMessage()));
+                throw new ServiceException(e.getMessage());
+            }
+        }
+        finally
+        {
+            AuthenticationContextHolder.clearContext();
+        }
+//        AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        loginUser.setLoginTime(System.currentTimeMillis());
+        recordLoginInfo(loginUser.getUserId());
+        // 生成token
+        return tokenService.createToken(loginUser,request);
     }
 }

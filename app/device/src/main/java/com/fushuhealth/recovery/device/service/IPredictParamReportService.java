@@ -10,5 +10,5 @@ import java.util.List;
  * @date 2024/9/30
  */
 public interface IPredictParamReportService {
-    BaseResponse<PredictParamReportResponse> searchDetail(Long predictWarnId);
+    PredictParamReportResponse searchDetail(Long predictWarnId);
 }

@@ -10,7 +10,6 @@ import lombok.Data;
 public class PredictParamReport {
     private Long id;
     private Long quantificationId;
-    private String paramUrl;
     private Byte aiAnswer;
     private String remark;
     private Long predictWarnId;

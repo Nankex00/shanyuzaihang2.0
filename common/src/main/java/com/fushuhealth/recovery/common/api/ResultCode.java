@@ -12,7 +12,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResultCode {
 
-    SUCCESS(0, "操作成功"),
+    SUCCESS(200, "操作成功"),
 
     USER_NOT_FOUND(1, "登录错误"),
 

@@ -6,14 +6,19 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fushuhealth.recovery.common.api.BaseResponse;
 import com.fushuhealth.recovery.common.constant.DangerLevelType;
+import com.fushuhealth.recovery.common.constant.Gender;
+import com.fushuhealth.recovery.common.constant.RiskType;
 import com.fushuhealth.recovery.common.exception.ServiceException;
 import com.fushuhealth.recovery.common.util.DataTypeUtils;
+import com.fushuhealth.recovery.common.util.DateUtil;
+import com.fushuhealth.recovery.common.util.OldDateUtil;
 import com.fushuhealth.recovery.dal.dao.ChildrenMapper;
 import com.fushuhealth.recovery.dal.dao.DiagnoseRecordMapper;
 import com.fushuhealth.recovery.dal.dao.RisksMapper;
 import com.fushuhealth.recovery.dal.entity.Children;
 import com.fushuhealth.recovery.dal.entity.DiagnoseRecord;
 import com.fushuhealth.recovery.dal.entity.SysDept;
+import com.fushuhealth.recovery.dal.vo.ChildrenVo;
 import com.fushuhealth.recovery.device.model.dto.ChildrenDetailDto;
 import com.fushuhealth.recovery.device.model.dto.DiagnoseRecordDto;
 import com.fushuhealth.recovery.device.model.request.ChildrenRequest;
@@ -29,10 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * @author Zhuanz
@@ -81,8 +83,8 @@ public class ChildrenServiceImpl implements IChildrenService {
         List<Long> dangerOfMother = DataTypeUtils.IntegerToLongTypeHandler(childrenDetailDto.getDangerOfMother());
         //根据儿童信息中的列表为高危因素属性赋值
         ChildrenDetail childrenDetail = BeanUtil.copyProperties(childrenDetailDto, ChildrenDetail.class);
-        childrenDetail.setDangerOfMother(risksService.RisksExChanged(dangerOfMother));
-        childrenDetail.setDangerOfChild(risksService.RisksExChanged(dangerOfChild));
+        childrenDetail.setDangerOfMother(risksService.RisksExChanged(id, RiskType.MOTHER_RISK.getType()));
+        childrenDetail.setDangerOfChild(risksService.RisksExChanged(id, RiskType.CHILD_RISK.getType()));
         //加入最近的诊断记录
         MPJLambdaWrapper<DiagnoseRecord> lambdaQueryWrapper = new MPJLambdaWrapper<>();
        lambdaQueryWrapper
@@ -147,5 +149,52 @@ public class ChildrenServiceImpl implements IChildrenService {
         return childrenMapper.selectById(id);
     }
 
+    @Override
+    public ChildrenVo getChildren(Long id) {
+        Children children = getChildrenById(id);
+        if (children != null) {
+            return convertToChildrenVo(children);
+        }
+        return null;
+    }
+
+
+    private ChildrenVo convertToChildrenVo(Children children) {
+        ChildrenVo vo = new ChildrenVo();
+        vo.setBirthday(DateUtil.getYMD(children.getBirthday()));
+        vo.setBirthdayWeight(children.getBirthWeight());
+        vo.setGender(Gender.getGender(children.getGender()).getDesc());
+        vo.setGestationalWeek(children.getGestationalWeeks());
+        vo.setGestationalWeekDay(children.getGestationalWeekDay());
+        vo.setId(children.getId());
+        vo.setName(children.getName());
+        vo.setChildRisks(Arrays.asList(risksService.RisksExChanged(children.getId(), RiskType.CHILD_RISK.getType()).split(",")));
+        vo.setMotherRisks(Arrays.asList(risksService.RisksExChanged(children.getId(), RiskType.MOTHER_RISK.getType()).split(",")));
+        vo.setAge(OldDateUtil.getAge(children.getBirthday()));
+        String correctAge = "";
+        long week = 0;
+        long day = 0;
+        long days = DateUtil.getDaysBetweenTime(DateUtil.getCurrentTimeStamp(), children.getBirthday());
+        if (children.getGestationalWeeks() >= 37) {
+            week = days / 7;
+            day = days % 7;
+            correctAge = week + "周" + day + "天";
+        } else {
+            week = (days - (280 - children.getGestationalWeeks() * 7 - children.getGestationalWeekDay())) / 7;
+            day = (days - (280 - children.getGestationalWeeks() * 7 - children.getGestationalWeekDay())) % 7;
+            correctAge = week + "周" + day + "天";
+        }
+        vo.setCorrectAge(correctAge);
+        vo.setBirthdayDate(children.getBirthday());
+        vo.setMedicalCardNumber(children.getMedicalCardNumber());
+        vo.setContactPhone(children.getContactPhone());
+        vo.setExtraRisks(children.getExtraRisks());
+        vo.setParity(children.getParity());
+        vo.setAsphyxia(children.getAsphyxia());
+        vo.setHearingScreening(children.getHearingScreening());
+        vo.setDeformity(children.getDeformity());
+        vo.setFeedingWay(children.getFeedingWay());
+        return vo;
+    }
 
 }

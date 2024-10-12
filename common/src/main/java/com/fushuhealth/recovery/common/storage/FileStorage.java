@@ -31,8 +31,8 @@ public class FileStorage implements InitializingBean {
 
     private FilePathPolicy filePathPolicy = new DefaultFilePathPolicy();
 
-    @Value(value = "${storage.local.endpoint:''}")
-    private String localStorageEndpoint;
+//    @Value(value = "${storage.local.endpoint:''}")
+//    private String localStorageEndpoint;
     @Value(value = "${storage.outside.endpoint:''}")
     private String outsideStorageEndpoint;
 
@@ -361,9 +361,9 @@ public class FileStorage implements InitializingBean {
         return tempFileStorage;
     }
 
-    public String getLocalStorageEndpoint() {
-        return localStorageEndpoint;
-    }
+//    public String getLocalStorageEndpoint() {
+//        return localStorageEndpoint;
+//    }
 
     public String getOutsideStorageEndpoint() {
         return outsideStorageEndpoint;

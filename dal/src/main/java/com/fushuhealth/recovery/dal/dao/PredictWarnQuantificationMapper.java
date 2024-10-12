@@ -1,5 +1,7 @@
 package com.fushuhealth.recovery.dal.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.fushuhealth.recovery.dal.entity.PredictWarnQuantification;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -7,5 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2024/9/30
  */
 @Mapper
-public interface PredictWarnQuantificationMapper {
+public interface PredictWarnQuantificationMapper extends BaseMapper<PredictWarnQuantification> {
 }
