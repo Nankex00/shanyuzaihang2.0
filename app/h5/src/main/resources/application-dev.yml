@@ -65,18 +65,23 @@ token:
 file:
   domain: https://platform-test.fushuhealth.com/platform/storage/image/
 
+action:
+  attribute: /Users/Zhuanz/fushujiankang2.0/json/action.json
+
 scale-table:
   file: /Users/Zhuanz/fushujiankang2.0/json/scaleTable.json
   result:
     cerebralPalsyPath: /Users/Zhuanz/fushujiankang2.0/json/result.json
   video-mark-param: /Users/Zhuanz/fushujiankang2.0/json/videoMarkParam.json
   actionVideoFilePath: /Users/Zhuanz/fushujiankang2.0/json/video.json
+  abnormalMethodFilePath: /Users/Zhuanz/fushujiankang2.0/json/abnormalIterm.json
+  trainMethodFilePath: /Users/Zhuanz/fushujiankang2.0/json/train.json
 
 storage:
   mode: cloud
   temp-storage-root: /data/app/fushu/backend/platform_test/storage/tmp/
   outside:
-    endpoint: http://platform-test.fushuhealth.com
+    endpoint: http://47.99.124.228:11080
   local:
     endpoint: http://platform-test.fushuhealth.com/recovery/storage
     root: /data/app/fushu/backend/platform/storage/

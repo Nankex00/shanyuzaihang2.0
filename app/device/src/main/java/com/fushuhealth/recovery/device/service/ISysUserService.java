@@ -1,6 +1,8 @@
 package com.fushuhealth.recovery.device.service;
 
 import com.fushuhealth.recovery.common.core.domin.SysUser;
+import com.fushuhealth.recovery.device.model.response.PatientListResponse;
+import com.fushuhealth.recovery.device.model.vo.LoginVo;
 
 /**
  * @author Zhuanz
@@ -44,5 +46,7 @@ public interface ISysUserService {
     Long getUserId(Long deptId);
 
     SysUser getUser(long id);
+
+    LoginVo getLoginVo();
 
 }

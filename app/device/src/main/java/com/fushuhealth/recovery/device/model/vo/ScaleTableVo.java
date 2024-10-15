@@ -2,6 +2,7 @@ package com.fushuhealth.recovery.device.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fushuhealth.recovery.dal.vo.ScaleTableQuestionSubjectVo;
 import lombok.Data;
 
 import java.util.List;

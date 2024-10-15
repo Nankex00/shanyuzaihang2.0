@@ -1,5 +1,6 @@
 package com.fushuhealth.recovery.device.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fushuhealth.recovery.common.constant.MonthType;
@@ -44,11 +45,11 @@ public class PredictParamReportServiceImpl implements IPredictParamReportService
 
     @Override
     public PredictParamReportResponse searchDetail(Long predictWarnId) {
-        //todo:修改结构
+        //todo:是否需要给到AiAnswer的枚举转化
         MPJLambdaWrapper<PredictParamReport> lambdaWrapper = new MPJLambdaWrapper<>();
         lambdaWrapper.selectAll(PredictParamReport.class)
                 .selectAs(PredictWarnQuantification::getScreeningItem, PredictParamReportVo::getPredictWarnQuestion)
-                .eq(PredictParamReport::getId,predictWarnId)
+                .eq(PredictParamReport::getPredictWarnId,predictWarnId)
                 .leftJoin(PredictWarnQuantification.class,PredictWarnQuantification::getId,PredictParamReport::getQuantificationId);
         List<PredictParamReportVo> predictParamReportVos = predictParamReportMapper.selectJoinList(PredictParamReportVo.class, lambdaWrapper);
         if (CollectionUtils.isNotEmpty(predictParamReportVos)){
@@ -73,6 +74,12 @@ public class PredictParamReportServiceImpl implements IPredictParamReportService
                                         AttachmentVo attachmentVo = new AttachmentVo();
                                         attachmentVo.setCoverUrl(attachmentDto.getCoverFileId() == 0 ? "" : fileService.getFileUrl(attachmentDto.getCoverFileId(), false));
                                         attachmentVo.setUrl(attachmentDto.getFileId() == 0 ? "" : fileService.getFileUrl(attachmentDto.getFileId(), false));
+                                        attachmentVo.setScaldId(scaleEvaluationRecord.getId());
+                                        attachmentVo.setType(scaleEvaluationRecord.getType());
+                                        attachmentVo.setFileId(attachmentDto.getFileId());
+                                        //todo:position是什么参数
+//                                        attachmentVo.setPosition(null);
+//                                        attachmentVo.setVideoType();
                                         videos.add(attachmentVo);
                                     }
                                 }

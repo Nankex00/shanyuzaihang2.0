@@ -48,10 +48,12 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      *
      * @return 菜单列表
      */
-    @Select("select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time" +
+    @Select("select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.query, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time" +
             " from sys_menu m where m.menu_type in ('M', 'C') and m.status = 0" +
             " order by m.parent_id, m.order_num")
     public List<SysMenu> selectMenuTreeAll();
+
+
 
 
     /**
@@ -60,15 +62,16 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      * @param userId 用户ID
      * @return 菜单列表
      */
-    @Select("select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time" +
+    @Select("select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.query as query_param, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time" +
             " from sys_menu m" +
             " left join sys_role_menu rm on m.menu_id = rm.menu_id" +
             " left join sys_user_role ur on rm.role_id = ur.role_id" +
             " left join sys_role ro on ur.role_id = ro.role_id" +
             " left join sys_user u on ur.user_id = u.user_id" +
-            " where u.user_id = #{userId} and m.menu_type in ('M', 'C') and m.status = 0  AND ro.status = 0" +
+            " where u.user_id = #{userId} and m.menu_type in ('M', 'C') and m.status = 0 AND ro.status = 0" +
             " order by m.parent_id, m.order_num")
     public List<SysMenu> selectMenuTreeByUserId(Long userId);
+
 
     List<SysMenu> selectMenuList(SysMenu menu);
 

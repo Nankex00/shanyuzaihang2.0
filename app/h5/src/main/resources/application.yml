@@ -2,11 +2,11 @@ spring:
   application:
     name: recovery
   profiles:
-    active: dev
+    active: test
   messages:
     basename: static/i18n/messages
 
 server:
-  port: 8300
+  port: 8400
   servlet:
-    context-path: /recovery
+    context-path: /h5

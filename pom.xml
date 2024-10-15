@@ -12,7 +12,7 @@
         <module>common</module>
         <module>dal</module>
         <module>app/device</module>
-<!--        <module>app/h5</module>-->
+        <module>app/h5</module>
     </modules>
 
     <parent>

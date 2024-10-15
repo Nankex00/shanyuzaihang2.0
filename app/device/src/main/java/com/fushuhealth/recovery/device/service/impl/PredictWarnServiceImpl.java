@@ -56,12 +56,12 @@ public class PredictWarnServiceImpl implements IPredictWarnService {
     @Override
     public BaseResponse<List<PredictWarnListResponse>> searchList(PredictWarnRequest request) {
         Page<PredictWarnListVo> page = new Page<>(request.getPageNum(),request.getPageSize());
-        MPJLambdaWrapper<Children> lambdaWrapper = new MPJLambdaWrapper<>();
+        MPJLambdaWrapper<PredictWarn> lambdaWrapper = new MPJLambdaWrapper<>();
         lambdaWrapper.selectAll(Children.class)
                 .selectAs(PredictWarn::getMonthAge, PredictWarnListVo::getMonthAge)
                 .selectAs(PredictWarn::getWarnResult,PredictWarnListVo::getWarnResult)
                 .selectAs(PredictWarn::getSubmitTime,PredictWarnListVo::getSubmitTime)
-                .leftJoin(PredictWarn.class,PredictWarn::getChildId,Children::getId);
+                .leftJoin(Children.class,Children::getId,PredictWarn::getChildId);
         Byte type = request.getType() != null ? request.getType() : 0; // 默认值为 0，根据需要修改
         lambdaWrapper.eq(type != 0, Children::getDangerLevel, type);
         if (request.getQuery()!=null&& !request.getQuery().isEmpty()){
@@ -70,7 +70,7 @@ public class PredictWarnServiceImpl implements IPredictWarnService {
                     .like(Children::getName,request.getQuery());
         }
         lambdaWrapper.orderByDesc(PredictWarn::getSubmitTime);
-        childrenMapper.selectJoinPage(page,PredictWarnListVo.class, lambdaWrapper);
+        predictWarnMapper.selectJoinPage(page,PredictWarnListVo.class, lambdaWrapper);
         List<PredictWarnListResponse> responses = new ArrayList<>();
         List<PredictWarnListVo> records = page.getRecords();
         records.forEach(predictWarnListVo -> {

@@ -1,7 +1,10 @@
 package com.fushuhealth.recovery.device.model.request;
 
+import com.fushuhealth.recovery.dal.dto.FileDto;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+import java.util.List;
 
 //import javax.validation.constraints.NotNull;
 
@@ -19,10 +22,10 @@ public class RepeatFiltrateEditRequest {
     private Byte monthAge;
     @NotNull(message = "AQS结果不能为空")
     private String aqsResult;
-    private String aqsUrls;
+    private List<FileDto> aqs;
     @NotNull(message = "DDST结果不能为空")
     private String ddstResult;
-    private String ddstUrls;
+    private List<FileDto> ddst;
     private String otherResult;
-    private String otherUrls;
+    private List<FileDto> others;
 }

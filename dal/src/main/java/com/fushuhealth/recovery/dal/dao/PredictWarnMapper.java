@@ -1,6 +1,8 @@
 package com.fushuhealth.recovery.dal.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.fushuhealth.recovery.common.annonation.DataColumn;
+import com.fushuhealth.recovery.common.annonation.DataPermission;
 import com.fushuhealth.recovery.dal.entity.PredictWarn;
 import com.github.yulichang.base.MPJBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -13,6 +15,10 @@ import java.time.LocalDateTime;
  * @author Zhuanz
  * @date 2024/9/29
  */
+@DataPermission({
+        @DataColumn(key = "deptName",value = "t.dept_id"),
+        @DataColumn(key = "userName",value = "user_id")
+})
 @Mapper
 public interface PredictWarnMapper extends MPJBaseMapper<PredictWarn> {
     @Update("UPDATE predict_warn" +

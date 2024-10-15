@@ -95,8 +95,12 @@ public class TransferRecordServiceImpl implements ITransferRecordService {
         //todo:接诊回复联表查询
         //todo:数据权限能否实现a转b b同样可以看
         MPJLambdaWrapper<Children> lambdaWrapper = new MPJLambdaWrapper<>();
-        lambdaWrapper.selectAll(Children.class)
+        lambdaWrapper
                 .selectAll(TransferRecord.class)
+                .selectAs(Children::getAge,TransferRecordListDto::getAge)
+                .selectAs(Children::getName,TransferRecordListDto::getName)
+                .selectAs(Children::getSex,TransferRecordListDto::getSex)
+                .selectAs(Children::getDangerLevel,TransferRecordListDto::getDangerLevel)
                 .leftJoin(TransferRecord.class,TransferRecord::getChildId,Children::getId);
         if (request.getQuery()!=null&& !request.getQuery().isEmpty()){
             lambdaWrapper.like(Children::getId,request.getQuery())

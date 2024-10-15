@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class AttachmentVo {
+    private Long scaldId;
 
     private Long fileId;
 

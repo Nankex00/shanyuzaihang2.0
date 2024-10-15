@@ -6,15 +6,26 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fushuhealth.recovery.common.api.ResultCode;
 import com.fushuhealth.recovery.common.constant.BaseStatus;
 import com.fushuhealth.recovery.common.constant.RoleEnum;
+import com.fushuhealth.recovery.common.core.domin.VideoInfo;
+import com.fushuhealth.recovery.common.exception.OldServiceException;
 import com.fushuhealth.recovery.common.storage.FileStorage;
 import com.fushuhealth.recovery.common.storage.FileType;
-import com.fushuhealth.recovery.common.util.DateUtil;
-import com.fushuhealth.recovery.common.util.StringUtil;
+import com.fushuhealth.recovery.common.storage.OldFileType;
+import com.fushuhealth.recovery.common.util.*;
 import com.fushuhealth.recovery.dal.dao.ActionVideoDao;
 import com.fushuhealth.recovery.dal.dto.PositionFile;
 import com.fushuhealth.recovery.dal.entity.ActionVideo;
+import com.fushuhealth.recovery.dal.entity.Files;
+import com.fushuhealth.recovery.dal.vo.ActionVideoListVo;
+import com.fushuhealth.recovery.dal.vo.ActionVideoVo;
 import com.fushuhealth.recovery.dal.vo.ActionVo;
 import com.fushuhealth.recovery.dal.vo.PositionFileVo;
+import com.fushuhealth.recovery.device.model.request.CommitUploadRequest;
+import com.fushuhealth.recovery.device.model.request.SaveActionVideoRequest;
+import com.fushuhealth.recovery.device.model.request.UpdateActionVideoRequest;
+import com.fushuhealth.recovery.device.model.response.ListActionVideoResponse;
+import com.fushuhealth.recovery.device.model.vo.LoginVo;
+import com.fushuhealth.recovery.device.model.vo.PageVo;
 import com.fushuhealth.recovery.device.service.ActionService;
 import com.fushuhealth.recovery.device.service.ActionVideoService;
 import com.fushuhealth.recovery.device.service.FileService;
@@ -41,14 +52,14 @@ public class ActionVideoServiceImpl implements ActionVideoService {
     @Autowired
     private ActionVideoDao actionVideoDao;
 
-//    @Autowired
-//    private FileService fileService;
-//
-//    @Autowired
-//    private ActionService actionService;
-//
-//    @Autowired
-//    private FileStorage fileStorage;
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private ActionService actionService;
+
+    @Autowired
+    private FileStorage fileStorage;
 
 //    @Autowired
 //    private DoctorService doctorService;
@@ -142,24 +153,25 @@ public class ActionVideoServiceImpl implements ActionVideoService {
         }
         return null;
     }
-//
-//    @Override
-//    public ListActionVideoResponse listActionVideo(int pageNo, int pageSize, long actionId, String name, byte isPublic, LoginVo loginVo) {
-//
-//        Page<ActionVideo> page = new Page<>(pageNo, pageSize);
-//        QueryWrapper<ActionVideo> wrapper = new QueryWrapper<>();
-//        wrapper.eq("status", BaseStatus.NORMAL.getStatus());
-////        if (isPublic != PublicStatus.All.getStatus()) {
-////            wrapper.eq("is_public", isPublic);
-////        }
-//        if (actionId != 0) {
-//            wrapper.eq("action_id", actionId);
-//        } else {
-//            wrapper.in("action_id", loginVo.getActionIds());
+
+    @Override
+    public ListActionVideoResponse listActionVideo(int pageNo, int pageSize, long actionId, String name, byte isPublic, LoginVo loginVo) {
+
+        Page<ActionVideo> page = new Page<>(pageNo, pageSize);
+        QueryWrapper<ActionVideo> wrapper = new QueryWrapper<>();
+        wrapper.eq("status", BaseStatus.NORMAL.getStatus());
+//        if (isPublic != PublicStatus.All.getStatus()) {
+//            wrapper.eq("is_public", isPublic);
 //        }
-//        if (!StringUtils.isBlank(name)) {
-//            wrapper.like("video_name", name);
-//        }
+        if (actionId != 0) {
+            wrapper.eq("action_id", actionId);
+        } else {
+            wrapper.in("action_id", loginVo.getActionIds());
+        }
+        if (!StringUtils.isBlank(name)) {
+            wrapper.like("video_name", name);
+        }
+        //todo:感觉不需要这段
 //        List<Long> ids = doctorService.getDoctorIdByOrganizationId(loginVo.getOrganizationId());
 //        if (loginVo.getRoleName().equalsIgnoreCase(RoleEnum.ROLE_MECHANISM_ADMIN.getName())) {
 //            wrapper.in("user_id", ids).eq("is_public", PublicStatus.YES_MECHANISM.getStatus());
@@ -168,265 +180,265 @@ public class ActionVideoServiceImpl implements ActionVideoService {
 //                    .or(wpp -> wpp.in("user_id", ids).eq("is_public", PublicStatus.YES_MECHANISM.getStatus()))
 //                    .or(wppp -> wppp.eq("is_public", PublicStatus.YES_PLATFORM.getStatus())));
 //        }
-//        wrapper.orderByDesc("id");
-//        page = actionVideoDao.selectPage(page, wrapper);
-//        List<ActionVideo> records = page.getRecords();
-//        List<ActionVideoListVo> list = records.stream().map(record -> convertToActionVideoListVo(record)).collect(Collectors.toList());
-//
-//        PageVo pageVo = PageVo.builder()
-//                .page(page.getCurrent()).totalPage(page.getPages()).totalRecord(page.getTotal()).build();
-//        return new ListActionVideoResponse(pageVo, list);
-//    }
-//
-//    @Override
-//    public ActionVideoVo getActionVideoVo(long id) {
-//        ActionVideo actionVideo = actionVideoDao.selectById(id);
-//        return convertToActionVideoVo(actionVideo);
-//    }
-//
-//    @Override
-//    public void changeActionVideoPublic(long id, byte isPublic) {
-//        ActionVideo actionVideo = actionVideoDao.selectById(id);
-////        if (actionVideo.getIsPublic() == PublicStatus.NO.getStatus()) {
-////            actionVideo.setIsPublic(PublicStatus.YES_MECHANISM.getStatus());
-////        } else {
-////            actionVideo.setIsPublic(PublicStatus.NO.getStatus());
-////        }
-//        actionVideo.setIsPublic(isPublic);
-//        actionVideo.setUpdated(DateUtil.getCurrentTimeStamp());
-//        actionVideoDao.updateById(actionVideo);
-//    }
-//
-//    @Transactional
-//    @Override
-//    public void saveActionVideo(SaveActionVideoRequest request, LoginVo loginVo) {
-//        ActionVo actionVo = actionService.getActionVo(request.getActionId());
-//        List<CommitUploadRequest> commits = request.getFiles();
-//
-//        List<PositionFile> positionFiles = new ArrayList<>();
-//
-//        long fileId = 0l;
-//        for (CommitUploadRequest commit : commits) {
-//            String key = commit.getKey();
-//            fileStorage.convertToM3u8(FileType.VIDEO.getName(), key);
-//            String fileName = "";
-//            if (StringUtils.isNotBlank(commit.getFileName())) {
-//                fileName = commit.getFileName();
-//            } else {
-//                fileName = FilenameUtils.getName(key);
-//            }
-//            Files files = new Files();
-//            files.setStatus(BaseStatus.NORMAL.getStatus());
-//            files.setRawName(fileName);
-//            files.setOriginalName(fileName);
-//            files.setFileType(FileType.getType(commit.getBucket()).getCode());
-//            files.setCreated(DateUtil.getCurrentTimeStamp());
-//            files.setFileSize(commit.getSize());
-//            files.setFilePath(commit.getKey());
-//            files.setExtension(FilenameUtils.getExtension(fileName));
-//            files.setUpdated(DateUtil.getCurrentTimeStamp());
-//            fileService.insertFiles(files);
-//
-//            String position = commit.getPosition();
-//
-//            PositionFile positionFile = new PositionFile(position, files.getId());
-//            positionFiles.add(positionFile);
-//        }
-//
-//        fileId = positionFiles.get(0).getFileId();
-//
-//        ActionVideo actionVideo = new ActionVideo();
-//        actionVideo.setVideoName(actionVo.getActionName());
-//        actionVideo.setUserId(loginVo.getId());
-//        actionVideo.setUpdated(DateUtil.getCurrentTimeStamp());
-//        actionVideo.setStatus(BaseStatus.NORMAL.getStatus());
-//        actionVideo.setDuration(0l);
-//        actionVideo.setCreated(DateUtil.getCurrentTimeStamp());
-//        actionVideo.setCoverFileId(actionVo.getCoverFileId());
-//        actionVideo.setActionId(actionVo.getId());
-//        actionVideo.setIsPublic(request.getIsPublic());
-//        actionVideo.setVideos(JSON.toJSONString(positionFiles));
-//        actionVideoDao.insert(actionVideo);
-//
-//        File file = fileService.downloadFile(fileId);
-//
-//        String coverName = StringUtil.uuid() + ".jpg";
-//        VideoInfo videoInfo = null;
-//        String coverPath = "";
-//        try {
-//            videoInfo = VideoTool.getVideoInfo(file.getAbsolutePath(), coverName);
-//            coverPath = fileService.saveFile(FileType.PICTURE, videoInfo.getCover(), coverName);
-//            log.info("cover file name : {}", coverPath);
-//            Files coverFile = new Files();
-//            coverFile.setUpdated(DateUtil.getCurrentTimeStamp());
-//            coverFile.setExtension(FilenameUtils.getExtension(coverName));
-//            coverFile.setFilePath(coverPath);
-//            coverFile.setFileSize(videoInfo.getCover().length());
-//            coverFile.setCreated(DateUtil.getCurrentTimeStamp());
-//            coverFile.setFileType(FileType.PICTURE.getCode());
-//            coverFile.setOriginalName(coverName);
-//            coverFile.setRawName(coverName);
-//            coverFile.setStatus(BaseStatus.NORMAL.getStatus());
-//            fileService.insertFiles(coverFile);
-//
-//            actionVideo.setCoverFileId(coverFile.getId());
-//            actionVideo.setDuration((long)videoInfo.getDuration());
-//
-//            actionVideoDao.updateById(actionVideo);
-//
-//        } catch (Exception e) {
-//            log.error("error:", e);
-//            throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
-//    @Transactional
-//    @Override
-//    public void updateActionVideo(UpdateActionVideoRequest request, LoginVo loginVo) {
-//        ActionVideo actionVideo = actionVideoDao.selectById(request.getId());
-//        if (actionVideo == null) {
-//            throw new ServiceException(ResultCode.PARAM_ERROR);
-//        }
-//        ActionVo actionVo = actionService.getActionVo(request.getActionId());
-//        List<CommitUploadRequest> commits = request.getFiles();
-//
-//
-//        if (CollectionUtils.isNotEmpty(commits)) {
-//            List<PositionFile> positionFiles = new ArrayList<>();
-//            long fileId = 0l;
-//            for (CommitUploadRequest commit : commits) {
-//                String key = commit.getKey();
-//                fileStorage.convertToM3u8(FileType.VIDEO.getName(), key);
-//                String fileName = "";
-//                if (StringUtils.isNotBlank(commit.getFileName())) {
-//                    fileName = commit.getFileName();
-//                } else {
-//                    fileName = FilenameUtils.getName(key);
-//                }
-//                Files files = new Files();
-//                files.setStatus(BaseStatus.NORMAL.getStatus());
-//                files.setRawName(fileName);
-//                files.setOriginalName(fileName);
-//                files.setFileType(FileType.getType(commit.getBucket()).getCode());
-//                files.setCreated(DateUtil.getCurrentTimeStamp());
-//                files.setFileSize(commit.getSize());
-//                files.setFilePath(commit.getKey());
-//                files.setExtension(FilenameUtils.getExtension(fileName));
-//                files.setUpdated(DateUtil.getCurrentTimeStamp());
-//                fileService.insertFiles(files);
-//
-//                String position = commit.getPosition();
-//
-//                PositionFile positionFile = new PositionFile(position, files.getId());
-//                positionFiles.add(positionFile);
-//            }
-//
-//            fileId = positionFiles.get(0).getFileId();
-//
-//            File file = fileService.downloadFile(fileId);
-//
-//            String coverName = StringUtil.uuid() + ".jpg";
-//            VideoInfo videoInfo = null;
-//            String coverPath = "";
-//            try {
-//                videoInfo = VideoTool.getVideoInfo(file.getAbsolutePath(), coverName);
-//                coverPath = fileService.saveFile(FileType.PICTURE, videoInfo.getCover(), coverName);
-//                log.info("cover file name : {}", coverPath);
-//                Files coverFile = new Files();
-//                coverFile.setUpdated(DateUtil.getCurrentTimeStamp());
-//                coverFile.setExtension(FilenameUtils.getExtension(coverName));
-//                coverFile.setFilePath(coverPath);
-//                coverFile.setFileSize(videoInfo.getCover().length());
-//                coverFile.setCreated(DateUtil.getCurrentTimeStamp());
-//                coverFile.setFileType(FileType.PICTURE.getCode());
-//                coverFile.setOriginalName(coverName);
-//                coverFile.setRawName(coverName);
-//                coverFile.setStatus(BaseStatus.NORMAL.getStatus());
-//                fileService.insertFiles(coverFile);
-//
-//                actionVideo.setCoverFileId(coverFile.getId());
-//                actionVideo.setDuration((long)videoInfo.getDuration());
-//
-//                actionVideoDao.updateById(actionVideo);
-//
-//            } catch (Exception e) {
-//                log.error("error:", e);
-//                throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR);
-//            }
-//            actionVideo.setVideos(JSON.toJSONString(positionFiles));
-//        }
-//        actionVideo.setVideoName(actionVo.getActionName());
-//        actionVideo.setUserId(loginVo.getId());
-//        actionVideo.setUpdated(DateUtil.getCurrentTimeStamp());
-//        actionVideo.setActionId(actionVo.getId());
-//        actionVideo.setIsPublic(request.getIsPublic());
-//
-//        actionVideoDao.updateById(actionVideo);
-//    }
-//
-//    @Override
-//    public void deleteActionVideo(long id) {
-//        ActionVideo actionVideo = getById(id);
-//        if (actionVideo == null) {
-//            throw new ServiceException(ResultCode.PARAM_ERROR);
-//        }
-//        actionVideo.setStatus(BaseStatus.DELETE.getStatus());
-//        actionVideo.setUpdated(DateUtil.getCurrentTimeStamp());
-//        actionVideoDao.updateById(actionVideo);
-//    }
-//
-//    private ActionVideoVo convertToActionVideoVo(ActionVideo actionVideo) {
-//        ActionVideoVo vo = new ActionVideoVo();
-//        ActionVo actionVo = actionService.getActionVo(actionVideo.getActionId());
-//        vo.setDuration(DateUtil.secondToHMS(actionVideo.getDuration()));
-//        vo.setId(actionVideo.getId());
-//        List<PositionFile> positionFiles = JSON.parseArray(actionVideo.getVideos(), PositionFile.class);
-//        if (CollectionUtils.isNotEmpty(positionFiles)) {
-//            PositionFile positionFile = positionFiles.get(0);
-//            Files file = fileService.getFile(positionFile.getFileId());
-//            vo.setFileName(file.getOriginalName());
+        wrapper.orderByDesc("id");
+        page = actionVideoDao.selectPage(page, wrapper);
+        List<ActionVideo> records = page.getRecords();
+        List<ActionVideoListVo> list = records.stream().map(record -> convertToActionVideoListVo(record)).collect(Collectors.toList());
+
+        PageVo pageVo = PageVo.builder()
+                .page(page.getCurrent()).totalPage(page.getPages()).totalRecord(page.getTotal()).build();
+        return new ListActionVideoResponse(pageVo, list);
+    }
+
+    @Override
+    public ActionVideoVo getActionVideoVo(long id) {
+        ActionVideo actionVideo = actionVideoDao.selectById(id);
+        return convertToActionVideoVo(actionVideo);
+    }
+
+    @Override
+    public void changeActionVideoPublic(long id, byte isPublic) {
+        ActionVideo actionVideo = actionVideoDao.selectById(id);
+//        if (actionVideo.getIsPublic() == PublicStatus.NO.getStatus()) {
+//            actionVideo.setIsPublic(PublicStatus.YES_MECHANISM.getStatus());
 //        } else {
-//            vo.setFileName("");
+//            actionVideo.setIsPublic(PublicStatus.NO.getStatus());
 //        }
-//        List<PositionFileVo> collect = positionFiles.stream().map(positionFile -> convertToPositionFileVo(positionFile)).collect(Collectors.toList());
-//        vo.setVideos(collect);
-//        vo.setActionName(actionVideo.getVideoName());
-//        vo.setAnalysisPosition(actionVo.getAnalysisPosition());
+        actionVideo.setIsPublic(isPublic);
+        actionVideo.setUpdated(DateUtil.getCurrentTimeStamp());
+        actionVideoDao.updateById(actionVideo);
+    }
+
+    @Transactional
+    @Override
+    public void saveActionVideo(SaveActionVideoRequest request, LoginVo loginVo) {
+        ActionVo actionVo = actionService.getActionVo(request.getActionId());
+        List<CommitUploadRequest> commits = request.getFiles();
+
+        List<PositionFile> positionFiles = new ArrayList<>();
+
+        long fileId = 0l;
+        for (CommitUploadRequest commit : commits) {
+            String key = commit.getKey();
+            fileStorage.convertToM3u8(OldFileType.VIDEO.getName(), key);
+            String fileName = "";
+            if (StringUtils.isNotBlank(commit.getFileName())) {
+                fileName = commit.getFileName();
+            } else {
+                fileName = FilenameUtils.getName(key);
+            }
+            Files files = new Files();
+            files.setStatus(BaseStatus.NORMAL.getStatus());
+            files.setRawName(fileName);
+            files.setOriginalName(fileName);
+            files.setFileType(OldFileType.getType(commit.getBucket()).getCode());
+            files.setCreated(DateUtil.getCurrentTimeStamp());
+            files.setFileSize(commit.getSize());
+            files.setFilePath(commit.getKey());
+            files.setExtension(FilenameUtils.getExtension(fileName));
+            files.setUpdated(DateUtil.getCurrentTimeStamp());
+            fileService.insertFiles(files);
+
+            String position = commit.getPosition();
+
+            PositionFile positionFile = new PositionFile(position, files.getId());
+            positionFiles.add(positionFile);
+        }
+
+        fileId = positionFiles.get(0).getFileId();
+
+        ActionVideo actionVideo = new ActionVideo();
+        actionVideo.setVideoName(actionVo.getActionName());
+        actionVideo.setUserId(loginVo.getId());
+        actionVideo.setUpdated(DateUtil.getCurrentTimeStamp());
+        actionVideo.setStatus(BaseStatus.NORMAL.getStatus());
+        actionVideo.setDuration(0l);
+        actionVideo.setCreated(DateUtil.getCurrentTimeStamp());
+        actionVideo.setCoverFileId(actionVo.getCoverFileId());
+        actionVideo.setActionId(actionVo.getId());
+        actionVideo.setIsPublic(request.getIsPublic());
+        actionVideo.setVideos(JSON.toJSONString(positionFiles));
+        actionVideoDao.insert(actionVideo);
+
+        File file = fileService.downloadFile(fileId);
+
+        String coverName = StringUtil.uuid() + ".jpg";
+        VideoInfo videoInfo = null;
+        String coverPath = "";
+        try {
+            videoInfo = VideoTool.getVideoInfo(file.getAbsolutePath(), coverName);
+            coverPath = fileService.saveFile(OldFileType.PICTURE, videoInfo.getCover(), coverName);
+            log.info("cover file name : {}", coverPath);
+            Files coverFile = new Files();
+            coverFile.setUpdated(DateUtil.getCurrentTimeStamp());
+            coverFile.setExtension(FilenameUtils.getExtension(coverName));
+            coverFile.setFilePath(coverPath);
+            coverFile.setFileSize(videoInfo.getCover().length());
+            coverFile.setCreated(DateUtil.getCurrentTimeStamp());
+            coverFile.setFileType(OldFileType.PICTURE.getCode());
+            coverFile.setOriginalName(coverName);
+            coverFile.setRawName(coverName);
+            coverFile.setStatus(BaseStatus.NORMAL.getStatus());
+            fileService.insertFiles(coverFile);
+
+            actionVideo.setCoverFileId(coverFile.getId());
+            actionVideo.setDuration((long)videoInfo.getDuration());
+
+            actionVideoDao.updateById(actionVideo);
+
+        } catch (Exception e) {
+            log.error("error:", e);
+            throw new OldServiceException(ResultCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void updateActionVideo(UpdateActionVideoRequest request, LoginVo loginVo) {
+        ActionVideo actionVideo = actionVideoDao.selectById(request.getId());
+        if (actionVideo == null) {
+            throw new OldServiceException(ResultCode.PARAM_ERROR);
+        }
+        ActionVo actionVo = actionService.getActionVo(request.getActionId());
+        List<CommitUploadRequest> commits = request.getFiles();
+
+
+        if (CollectionUtils.isNotEmpty(commits)) {
+            List<PositionFile> positionFiles = new ArrayList<>();
+            long fileId = 0l;
+            for (CommitUploadRequest commit : commits) {
+                String key = commit.getKey();
+                fileStorage.convertToM3u8(OldFileType.VIDEO.getName(), key);
+                String fileName = "";
+                if (StringUtils.isNotBlank(commit.getFileName())) {
+                    fileName = commit.getFileName();
+                } else {
+                    fileName = FilenameUtils.getName(key);
+                }
+                Files files = new Files();
+                files.setStatus(BaseStatus.NORMAL.getStatus());
+                files.setRawName(fileName);
+                files.setOriginalName(fileName);
+                files.setFileType(OldFileType.getType(commit.getBucket()).getCode());
+                files.setCreated(DateUtil.getCurrentTimeStamp());
+                files.setFileSize(commit.getSize());
+                files.setFilePath(commit.getKey());
+                files.setExtension(FilenameUtils.getExtension(fileName));
+                files.setUpdated(DateUtil.getCurrentTimeStamp());
+                fileService.insertFiles(files);
+
+                String position = commit.getPosition();
+
+                PositionFile positionFile = new PositionFile(position, files.getId());
+                positionFiles.add(positionFile);
+            }
+
+            fileId = positionFiles.get(0).getFileId();
+
+            File file = fileService.downloadFile(fileId);
+
+            String coverName = StringUtil.uuid() + ".jpg";
+            VideoInfo videoInfo = null;
+            String coverPath = "";
+            try {
+                videoInfo = VideoTool.getVideoInfo(file.getAbsolutePath(), coverName);
+                coverPath = fileService.saveFile(OldFileType.PICTURE, videoInfo.getCover(), coverName);
+                log.info("cover file name : {}", coverPath);
+                Files coverFile = new Files();
+                coverFile.setUpdated(DateUtil.getCurrentTimeStamp());
+                coverFile.setExtension(FilenameUtils.getExtension(coverName));
+                coverFile.setFilePath(coverPath);
+                coverFile.setFileSize(videoInfo.getCover().length());
+                coverFile.setCreated(DateUtil.getCurrentTimeStamp());
+                coverFile.setFileType(OldFileType.PICTURE.getCode());
+                coverFile.setOriginalName(coverName);
+                coverFile.setRawName(coverName);
+                coverFile.setStatus(BaseStatus.NORMAL.getStatus());
+                fileService.insertFiles(coverFile);
+
+                actionVideo.setCoverFileId(coverFile.getId());
+                actionVideo.setDuration((long)videoInfo.getDuration());
+
+                actionVideoDao.updateById(actionVideo);
+
+            } catch (Exception e) {
+                log.error("error:", e);
+                throw new OldServiceException(ResultCode.INTERNAL_SERVER_ERROR);
+            }
+            actionVideo.setVideos(JSON.toJSONString(positionFiles));
+        }
+        actionVideo.setVideoName(actionVo.getActionName());
+        actionVideo.setUserId(loginVo.getId());
+        actionVideo.setUpdated(DateUtil.getCurrentTimeStamp());
+        actionVideo.setActionId(actionVo.getId());
+        actionVideo.setIsPublic(request.getIsPublic());
+
+        actionVideoDao.updateById(actionVideo);
+    }
+
+    @Override
+    public void deleteActionVideo(long id) {
+        ActionVideo actionVideo = getById(id);
+        if (actionVideo == null) {
+            throw new OldServiceException(ResultCode.PARAM_ERROR);
+        }
+        actionVideo.setStatus(BaseStatus.DELETE.getStatus());
+        actionVideo.setUpdated(DateUtil.getCurrentTimeStamp());
+        actionVideoDao.updateById(actionVideo);
+    }
 //
-//        return vo;
-//    }
-//
-//    private PositionFileVo convertToPositionFileVo(PositionFile positionFile) {
-//        PositionFileVo vo = new PositionFileVo();
-//        vo.setUrl(fileService.getFileUrl(positionFile.getFileId(), false));
-//        vo.setPosition(positionFile.getPosition());
-//        return vo;
-//    }
-//
-//    private ActionVideoListVo convertToActionVideoListVo(ActionVideo actionVideo) {
-//        ActionVo actionVo = actionService.getActionVo(actionVideo.getActionId());
-//        ActionVideoListVo vo = new ActionVideoListVo();
+    private ActionVideoVo convertToActionVideoVo(ActionVideo actionVideo) {
+        ActionVideoVo vo = new ActionVideoVo();
+        ActionVo actionVo = actionService.getActionVo(actionVideo.getActionId());
+        vo.setDuration(OldDateUtil.secondToHMS(actionVideo.getDuration()));
+        vo.setId(actionVideo.getId());
+        List<PositionFile> positionFiles = JSON.parseArray(actionVideo.getVideos(), PositionFile.class);
+        if (CollectionUtils.isNotEmpty(positionFiles)) {
+            PositionFile positionFile = positionFiles.get(0);
+            Files file = fileService.getFile(positionFile.getFileId());
+            vo.setFileName(file.getOriginalName());
+        } else {
+            vo.setFileName("");
+        }
+        List<PositionFileVo> collect = positionFiles.stream().map(positionFile -> convertToPositionFileVo(positionFile)).collect(Collectors.toList());
+        vo.setVideos(collect);
+        vo.setActionName(actionVideo.getVideoName());
+        vo.setAnalysisPosition(actionVo.getAnalysisPosition());
+
+        return vo;
+    }
+
+    private PositionFileVo convertToPositionFileVo(PositionFile positionFile) {
+        PositionFileVo vo = new PositionFileVo();
+        vo.setUrl(fileService.getFileUrl(positionFile.getFileId(), false));
+        vo.setPosition(positionFile.getPosition());
+        return vo;
+    }
+
+    private ActionVideoListVo convertToActionVideoListVo(ActionVideo actionVideo) {
+        ActionVo actionVo = actionService.getActionVo(actionVideo.getActionId());
+        ActionVideoListVo vo = new ActionVideoListVo();
 //        DoctorVo doctorVo = doctorService.getDoctorVo(actionVideo.getUserId());
-//        vo.setActionName(actionVideo.getVideoName());
-//        vo.setCreated(DateUtil.getYMDHMSDate(actionVideo.getCreated()));
-//        vo.setDuration(DateUtil.secondToHMS(actionVideo.getDuration()));
-//        vo.setId(actionVideo.getId());
-//        vo.setIsPublic(actionVideo.getIsPublic());
-//        vo.setUserId(doctorVo.getId());
-//        vo.setUserName(doctorVo.getName());
-//        vo.setSort(actionVo.getEquipment() + "-" + actionVo.getInstrument());
-//        vo.setActionId(actionVideo.getActionId());
-//        vo.setCoverUrl(fileService.getFileUrl(actionVideo.getCoverFileId(), false));
-//        List<PositionFile> positionFiles = JSON.parseArray(actionVideo.getVideos(), PositionFile.class);
-//        if (CollectionUtils.isNotEmpty(positionFiles) && positionFiles.size() > 1) {
-//            PositionFile pf = getPositionFile(positionFiles, actionVo.getAnalysisPosition());
-//            if (pf != null) {
-//                Collections.swap(positionFiles, positionFiles.indexOf(pf), 0);
-//            }
-//        }
-//        List<PositionFileVo> collect = positionFiles.stream().map(positionFile -> convertToPositionFileVo(positionFile)).collect(Collectors.toList());
-//        vo.setVideos(collect);
-//        vo.setAnalysisPostion(actionVo.getAnalysisPosition());
-//        return vo;
-//    }
+        vo.setActionName(actionVideo.getVideoName());
+        vo.setCreated(OldDateUtil.getYMDHMSDate(actionVideo.getCreated()));
+        vo.setDuration(OldDateUtil.secondToHMS(actionVideo.getDuration()));
+        vo.setId(actionVideo.getId());
+        vo.setIsPublic(actionVideo.getIsPublic());
+        vo.setUserId(SecurityUtils.getUserId());
+        vo.setUserName(SecurityUtils.getLoginUser().getUsername());
+        vo.setSort(actionVo.getEquipment() + "-" + actionVo.getInstrument());
+        vo.setActionId(actionVideo.getActionId());
+        vo.setCoverUrl(fileService.getFileUrl(actionVideo.getCoverFileId(), false));
+        List<PositionFile> positionFiles = JSON.parseArray(actionVideo.getVideos(), PositionFile.class);
+        if (CollectionUtils.isNotEmpty(positionFiles) && positionFiles.size() > 1) {
+            PositionFile pf = getPositionFile(positionFiles, actionVo.getAnalysisPosition());
+            if (pf != null) {
+                Collections.swap(positionFiles, positionFiles.indexOf(pf), 0);
+            }
+        }
+        List<PositionFileVo> collect = positionFiles.stream().map(positionFile -> convertToPositionFileVo(positionFile)).collect(Collectors.toList());
+        vo.setVideos(collect);
+        vo.setAnalysisPostion(actionVo.getAnalysisPosition());
+        return vo;
+    }
 }

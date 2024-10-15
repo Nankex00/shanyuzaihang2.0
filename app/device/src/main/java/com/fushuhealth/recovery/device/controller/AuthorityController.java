@@ -68,7 +68,9 @@ public class AuthorityController {
         // 权限集合
         Set<String> permissions = permissionService.getMenuPermission(user);
 
-        return AjaxResult.success("获取用户信息成功",new InfoResponse(sysUserVo,roles,permissions));
+        Long institutionLevel = sysDeptService.selectDeptLevelByDeptId(user.getDeptId());
+
+        return AjaxResult.success("获取用户信息成功",new InfoResponse(sysUserVo,roles,permissions,institutionLevel));
     }
 
     /**

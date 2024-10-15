@@ -11,6 +11,7 @@ import com.fushuhealth.recovery.common.exception.ServiceException;
 import com.fushuhealth.recovery.common.util.SecurityUtils;
 import com.fushuhealth.recovery.dal.dao.ChildrenMapper;
 import com.fushuhealth.recovery.dal.dao.EvaluateRecordMapper;
+import com.fushuhealth.recovery.dal.dto.FileDetailDto;
 import com.fushuhealth.recovery.dal.entity.Children;
 import com.fushuhealth.recovery.dal.entity.EvaluateRecord;
 import com.fushuhealth.recovery.dal.entity.RepeatFiltrateRecord;
@@ -22,15 +23,14 @@ import com.fushuhealth.recovery.device.model.request.EvaluateRecordListRequest;
 import com.fushuhealth.recovery.device.model.request.EvaluateRecordRequest;
 import com.fushuhealth.recovery.device.model.request.RepeatFiltrateEditRequest;
 import com.fushuhealth.recovery.device.model.response.*;
+import com.fushuhealth.recovery.device.service.FileService;
 import com.fushuhealth.recovery.device.service.IEvaluateRecordService;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Zhuanz
@@ -42,9 +42,17 @@ public class EvaluateRecordServiceImpl implements IEvaluateRecordService {
     private EvaluateRecordMapper evaluateRecordMapper;
     @Autowired
     private ChildrenMapper childrenMapper;
+    @Autowired
+    private FileService fileService;
     @Override
     public int add(EvaluateRecordRequest request) {
+        List<String> geSells = fileService.operateFile(null, request.getGeSellUrls());
+        List<String> ss = fileService.operateFile(null, request.getSSUrls());
+        List<String> other = fileService.operateFile(null, request.getOtherUrls());
         EvaluateRecord evaluateRecord = BeanUtil.copyProperties(request, EvaluateRecord.class);
+        evaluateRecord.setGeSellUrls(String.valueOf(geSells));
+        evaluateRecord.setSSUrls(String.valueOf(ss));
+        evaluateRecord.setOtherUrls(String.valueOf(other));
         evaluateRecord.setSubmitTime(new Date());
         evaluateRecord.setOperatedId(SecurityUtils.getUserId());
         return evaluateRecordMapper.insert(evaluateRecord);
@@ -56,6 +64,7 @@ public class EvaluateRecordServiceImpl implements IEvaluateRecordService {
         lambdaQueryWrapper.selectAll(EvaluateRecord.class)
                 .selectAs(SysDept::getDeptName, EvaluateRecordResponse::getOperateDept)
                 .eq(EvaluateRecord::getChildId,childId)
+                .eq(EvaluateRecord::getDelFlag,0)
                 .leftJoin(SysUser.class,SysUser::getUserId,EvaluateRecord::getOperatedId)
                 .leftJoin(SysDept.class,SysDept::getDeptId,SysUser::getDeptId);
         List<EvaluateRecordResponse> evaluateRecordResponses = evaluateRecordMapper.selectJoinList(EvaluateRecordResponse.class, lambdaQueryWrapper);
@@ -69,14 +78,67 @@ public class EvaluateRecordServiceImpl implements IEvaluateRecordService {
     @Override
     public EvaluateRecordDetail searchDetail(Long id) {
         EvaluateRecord evaluateRecord = evaluateRecordMapper.selectById(id);
-        return BeanUtil.copyProperties(evaluateRecord, EvaluateRecordDetail.class);
+        EvaluateRecordDetail evaluateRecordDetail = BeanUtil.copyProperties(evaluateRecord, EvaluateRecordDetail.class);
+        String geSellUrls = evaluateRecord.getGeSellUrls();
+        if (geSellUrls!=null){
+            geSellUrls =geSellUrls.substring(1, geSellUrls.length() - 1);
+            List<FileDetailDto> geSell = new ArrayList<>();
+            Arrays.stream(geSellUrls.split(", ")).forEach(ids->{
+                String filePath = fileService.getFilePath(Long.parseLong(ids));
+                geSell.add(new FileDetailDto(Long.parseLong(ids),fileService.getFileUrl(Long.parseLong(ids),true)));
+            });
+            evaluateRecordDetail.setGeSellUrls(geSell.toString());
+        }
+
+        String ssUrls = evaluateRecord.getSSUrls();
+        if (ssUrls!=null){
+            ssUrls =ssUrls.substring(1, ssUrls.length() - 1);
+            List<FileDetailDto> ss = new ArrayList<>();
+            Arrays.stream(ssUrls.split(", ")).forEach(ids->{
+                String filePath = fileService.getFilePath(Long.parseLong(ids));
+                ss.add(new FileDetailDto(Long.parseLong(ids),fileService.getFileUrl(Long.parseLong(ids),true)));
+            });
+            evaluateRecordDetail.setSSUrls(ss.toString());
+        }
+
+        String otherUrls = evaluateRecord.getOtherUrls();
+        if (otherUrls!=null){
+            otherUrls =otherUrls.substring(1, otherUrls.length() - 1);
+            List<FileDetailDto> others = new ArrayList<>();
+            Arrays.stream(otherUrls.split(", ")).forEach(ids->{
+                String filePath = fileService.getFilePath(Long.parseLong(ids));
+                others.add(new FileDetailDto(Long.parseLong(ids),fileService.getFileUrl(Long.parseLong(ids),true)));
+            });
+            evaluateRecordDetail.setOtherUrls(others.toString());
+        }
+        return evaluateRecordDetail;
     }
 
     @Override
     public int editDetail(EvaluateRecordEditRequest request) {
+        EvaluateRecord evaluateRecord1 = Optional.ofNullable(evaluateRecordMapper.selectById(request.getId())).orElseThrow(() -> new ServiceException("数据异常，不存在对应记录"));
+        List<String> geSell = fileService.operateFile(evaluateRecord1.getGeSellResult(), request.getGeSellUrls());
+        List<String> ss = fileService.operateFile(evaluateRecord1.getSSUrls(), request.getSSUrls());
+        List<String> others = fileService.operateFile(evaluateRecord1.getOtherUrls(), request.getOtherUrls());
         EvaluateRecord evaluateRecord = BeanUtil.copyProperties(request, EvaluateRecord.class);
         evaluateRecord.setSubmitTime(new Date());
         evaluateRecord.setOperatedId(SecurityUtils.getUserId());
+        if(CollectionUtils.isNotEmpty(geSell)){
+            evaluateRecord.setGeSellUrls(String.valueOf(geSell));
+        }else {
+            evaluateRecord.setGeSellUrls("[]");
+        }
+        if(CollectionUtils.isNotEmpty(ss)){
+            evaluateRecord.setGeSellUrls(String.valueOf(ss));
+        }else {
+            evaluateRecord.setSSUrls("[]");
+        }
+        if(CollectionUtils.isNotEmpty(others)){
+            evaluateRecord.setOtherUrls(String.valueOf(others));
+        }else {
+            evaluateRecord.setOtherUrls("[]");
+        }
+
         return evaluateRecordMapper.updateById(evaluateRecord);
     }
 

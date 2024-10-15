@@ -10,5 +10,7 @@ public interface ScaleTableService {
 
     ScaleTableVo getScaleTableVo(byte code);
 
+    ScaleTableVo getScaleTableVo(byte code, long birthday);
+
     List<ScaleTableListVo> listScaleTable(String name, byte firstLevel, byte secondLevel);
 }

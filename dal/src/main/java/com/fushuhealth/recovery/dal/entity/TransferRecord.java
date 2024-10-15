@@ -1,5 +1,7 @@
 package com.fushuhealth.recovery.dal.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fushuhealth.recovery.common.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransferRecord extends BaseEntity {
+    @TableId(type = IdType.AUTO)
     private Long id;
     private Date operatedTime;
     private Long transferInstitution;

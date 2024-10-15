@@ -1,11 +1,13 @@
 package com.fushuhealth.recovery.device.service;
 
-import com.fushuhealth.recovery.common.storage.FileType;
 import com.fushuhealth.recovery.common.storage.OldFileType;
+import com.fushuhealth.recovery.dal.dto.FileDetailDto;
+import com.fushuhealth.recovery.dal.dto.FileDto;
 import com.fushuhealth.recovery.dal.entity.Files;
 import com.fushuhealth.recovery.dal.vo.UploadFileTokenVo;
 
 import java.io.File;
+import java.util.List;
 
 public interface FileService {
 
@@ -32,4 +34,6 @@ public interface FileService {
     Files getFile(long id);
 
     String rotateVideo(long id);
+
+    List<String> operateFile(String orgIds, List<FileDto> fileDtoList);
 }

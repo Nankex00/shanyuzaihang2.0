@@ -17,4 +17,6 @@ public class InfoResponse {
     private SysUserVo user;
     private Set<String> roles;
     private Set<String> permissions;
+    private Long institutionLevel;
+//    private Long level;
 }

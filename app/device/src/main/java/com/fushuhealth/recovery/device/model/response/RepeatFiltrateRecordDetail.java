@@ -1,8 +1,10 @@
 package com.fushuhealth.recovery.device.model.response;
 
+import com.fushuhealth.recovery.dal.dto.FileDetailDto;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Zhuanz
@@ -14,9 +16,9 @@ public class RepeatFiltrateRecordDetail {
     private Long childId;
     private Byte monthAge;
     private String aqsResult;
-    private String aqsUrls;
+    private List<FileDetailDto> aqsUrls;
     private String ddstResult;
-    private String ddstUrls;
+    private List<FileDetailDto> ddstUrls;
     private String otherResult;
-    private String otherUrls;
+    private List<FileDetailDto> otherUrls;
 }

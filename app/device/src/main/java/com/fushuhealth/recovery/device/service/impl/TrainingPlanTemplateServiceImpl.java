@@ -1,6 +1,7 @@
 package com.fushuhealth.recovery.device.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fushuhealth.recovery.common.constant.BaseStatus;
@@ -9,24 +10,23 @@ import com.fushuhealth.recovery.dal.dao.TrainingPlanTemplateDao;
 import com.fushuhealth.recovery.dal.dto.PositionFile;
 import com.fushuhealth.recovery.dal.entity.ActionVideo;
 import com.fushuhealth.recovery.dal.entity.TrainingPlanTemplate;
-import com.fushuhealth.recovery.dal.vo.ActionVo;
-import com.fushuhealth.recovery.dal.vo.PositionFileVo;
+import com.fushuhealth.recovery.dal.vo.*;
 import com.fushuhealth.recovery.device.model.request.SavePlanActionRequest;
+import com.fushuhealth.recovery.device.model.request.SavePlanTemplateRequest;
+import com.fushuhealth.recovery.device.model.request.UpdateTrainingPlanTemplateRequest;
 import com.fushuhealth.recovery.device.model.response.ListTrainingPlanTemplateResponse;
 import com.fushuhealth.recovery.device.model.vo.PageVo;
-import com.fushuhealth.recovery.device.model.vo.TrainingPlanTemplateActionVo;
-import com.fushuhealth.recovery.device.model.vo.TrainingPlanTemplateListVo;
 import com.fushuhealth.recovery.device.service.ActionService;
 import com.fushuhealth.recovery.device.service.ActionVideoService;
 import com.fushuhealth.recovery.device.service.FileService;
 import com.fushuhealth.recovery.device.service.TrainingPlanTemplateService;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,13 +48,22 @@ public class TrainingPlanTemplateServiceImpl implements TrainingPlanTemplateServ
     @Override
     public ListTrainingPlanTemplateResponse listTemplate(int pageNo, int pageSize, long userId, String name) {
         Page<TrainingPlanTemplate> page = new Page<>(pageNo, pageSize);
-        QueryWrapper<TrainingPlanTemplate> wrapper = new QueryWrapper<>();
-        wrapper.eq("status", BaseStatus.NORMAL.getStatus()).eq("user_id", userId);
-        if (!StringUtils.isBlank(name)) {
-            wrapper.like("name", name);
+//        QueryWrapper<TrainingPlanTemplate> wrapper = new QueryWrapper<>();
+//        wrapper.eq("status", BaseStatus.NORMAL.getStatus()).eq("user_id", userId);
+//        if (!StringUtils.isBlank(name)) {
+//            wrapper.like("name", name);
+//        }
+//        wrapper.orderByDesc("id");
+        MPJLambdaWrapper<TrainingPlanTemplate> lambdaQueryWrapper = new MPJLambdaWrapper<>();
+        lambdaQueryWrapper
+                .selectAll(TrainingPlanTemplate.class)
+                .eq(TrainingPlanTemplate::getStatus,BaseStatus.NORMAL.getStatus())
+                .eq(TrainingPlanTemplate::getUserId,userId);
+        if (!StringUtils.isBlank(name)&& !name.isEmpty()) {
+            lambdaQueryWrapper.like(TrainingPlanTemplate::getName, name);
         }
-        wrapper.orderByDesc("id");
-        page = trainingPlanTemplateDao.selectPage(page, wrapper);
+        lambdaQueryWrapper.orderByDesc(TrainingPlanTemplate::getId);
+        page = trainingPlanTemplateDao.selectJoinPage(page,TrainingPlanTemplate.class,lambdaQueryWrapper);
         List<TrainingPlanTemplate> records = page.getRecords();
         List<TrainingPlanTemplateListVo> list = records.stream()
                 .map(template -> convertTrainingPlanTemplateListVo(template)).collect(Collectors.toList());
@@ -63,48 +72,48 @@ public class TrainingPlanTemplateServiceImpl implements TrainingPlanTemplateServ
         return new ListTrainingPlanTemplateResponse(pageVo, list);
     }
 
-//    @Override
-//    public void saveTrainingPlanTemplate(long userId, SavePlanTemplateRequest request) {
-//        TrainingPlanTemplate template = new TrainingPlanTemplate();
-//        List<SavePlanActionRequest> actions = request.getActions();
-//        template.setActionCount(actions.size());
-//        template.setActions(JSON.toJSONString(actions));
-//        template.setCreated(DateUtil.getCurrentTimeStamp());
-//        template.setName(request.getName());
-//        template.setStatus(BaseStatus.NORMAL.getStatus());
-//        template.setUpdated(DateUtil.getCurrentTimeStamp());
-//        template.setUserId(userId);
-//        trainingPlanTemplateDao.insert(template);
-//    }
-//
-//    @Override
-//    public void deleteTrainingPlanTemplate(long id) {
-//        TrainingPlanTemplate template = trainingPlanTemplateDao.selectById(id);
-//        template.setStatus(BaseStatus.DELETE.getStatus());
-//        trainingPlanTemplateDao.updateById(template);
-//    }
-//
-//    @Override
-//    public TrainingPlanTemplateVo getTrainingPlanTemplateVo(long id) {
-//        TrainingPlanTemplate template = trainingPlanTemplateDao.selectById(id);
-//        return convertTrainingPlanTemplateVo(template);
-//    }
-//
-//    @Override
-//    public void updateTrainingPlanTemplate(UpdateTrainingPlanTemplateRequest request) {
-//        TrainingPlanTemplate template = trainingPlanTemplateDao.selectById(request.getId());
-//        List<SavePlanActionRequest> actions = request.getActions();
-//        template.setName(request.getName());
-//        template.setActionCount(actions.size());
-//        template.setActions(JSON.toJSONString(actions));
-//        trainingPlanTemplateDao.updateById(template);
-//    }
-//
-//    @Override
-//    public TrainingPlanTemplate getTrainingPlanTemplate(long id) {
-//        return trainingPlanTemplateDao.selectById(id);
-//    }
-//
+    @Override
+    public void saveTrainingPlanTemplate(long userId, SavePlanTemplateRequest request) {
+        TrainingPlanTemplate template = new TrainingPlanTemplate();
+        List<SavePlanActionRequest> actions = request.getActions();
+        template.setActionCount(actions.size());
+        template.setActions(JSON.toJSONString(actions));
+        template.setCreated(DateUtil.getCurrentTimeStamp());
+        template.setName(request.getName());
+        template.setStatus(BaseStatus.NORMAL.getStatus());
+        template.setUpdated(DateUtil.getCurrentTimeStamp());
+        template.setUserId(userId);
+        trainingPlanTemplateDao.insert(template);
+    }
+
+    @Override
+    public void deleteTrainingPlanTemplate(long id) {
+        TrainingPlanTemplate template = trainingPlanTemplateDao.selectById(id);
+        template.setStatus(BaseStatus.DELETE.getStatus());
+        trainingPlanTemplateDao.updateById(template);
+    }
+
+    @Override
+    public TrainingPlanTemplateVo getTrainingPlanTemplateVo(long id) {
+        TrainingPlanTemplate template = trainingPlanTemplateDao.selectById(id);
+        return convertTrainingPlanTemplateVo(template);
+    }
+
+    @Override
+    public void updateTrainingPlanTemplate(UpdateTrainingPlanTemplateRequest request) {
+        TrainingPlanTemplate template = trainingPlanTemplateDao.selectById(request.getId());
+        List<SavePlanActionRequest> actions = request.getActions();
+        template.setName(request.getName());
+        template.setActionCount(actions.size());
+        template.setActions(JSON.toJSONString(actions));
+        trainingPlanTemplateDao.updateById(template);
+    }
+
+    @Override
+    public TrainingPlanTemplate getTrainingPlanTemplate(long id) {
+        return trainingPlanTemplateDao.selectById(id);
+    }
+
     private TrainingPlanTemplateListVo convertTrainingPlanTemplateListVo(TrainingPlanTemplate trainingPlanTemplate) {
         TrainingPlanTemplateListVo vo = new TrainingPlanTemplateListVo();
         List<SavePlanActionRequest> array = JSON.parseArray(trainingPlanTemplate.getActions(), SavePlanActionRequest.class);
@@ -130,16 +139,16 @@ public class TrainingPlanTemplateServiceImpl implements TrainingPlanTemplateServ
         vo.setCoverUrl(collect.get(0).getCoverUrl());
         return vo;
     }
-//
-//    private TrainingPlanTemplateVo convertTrainingPlanTemplateVo(TrainingPlanTemplate template) {
-//        TrainingPlanTemplateVo vo = new TrainingPlanTemplateVo();
-//        List<SavePlanActionRequest> array = JSON.parseArray(template.getActions(), SavePlanActionRequest.class);
-//        vo.setName(template.getName());
-//        vo.setActions(array.stream().map(request -> convertTrainingPlanTemplateActionVo(request)).collect(Collectors.toList()));
-//        vo.setId(template.getId());
-//        return vo;
-//    }
-//
+
+    private TrainingPlanTemplateVo convertTrainingPlanTemplateVo(TrainingPlanTemplate template) {
+        TrainingPlanTemplateVo vo = new TrainingPlanTemplateVo();
+        List<SavePlanActionRequest> array = JSON.parseArray(template.getActions(), SavePlanActionRequest.class);
+        vo.setName(template.getName());
+        vo.setActions(array.stream().map(request -> convertTrainingPlanTemplateActionVo(request)).collect(Collectors.toList()));
+        vo.setId(template.getId());
+        return vo;
+    }
+
     private TrainingPlanTemplateActionVo convertTrainingPlanTemplateActionVo(SavePlanActionRequest request) {
         TrainingPlanTemplateActionVo vo = new TrainingPlanTemplateActionVo();
         ActionVo actionVo = actionService.getActionVo(request.getActionId());

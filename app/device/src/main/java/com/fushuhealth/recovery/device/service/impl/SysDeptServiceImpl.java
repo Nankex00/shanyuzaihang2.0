@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fushuhealth.recovery.common.api.BaseResponse;
+import com.fushuhealth.recovery.common.constant.ReportType;
 import com.fushuhealth.recovery.common.constant.ServiceConstants;
 import com.fushuhealth.recovery.common.core.domin.SysUser;
 import com.fushuhealth.recovery.common.exception.ServiceException;
@@ -13,7 +14,6 @@ import com.fushuhealth.recovery.dal.dao.SysDeptMapper;
 import com.fushuhealth.recovery.dal.dao.SysUserMapper;
 import com.fushuhealth.recovery.dal.entity.SysDept;
 import com.fushuhealth.recovery.dal.entity.SysRoleDept;
-import com.fushuhealth.recovery.dal.entity.SysUserRole;
 import com.fushuhealth.recovery.device.model.bo.SysDeptBo;
 import com.fushuhealth.recovery.device.model.request.InstitutionRequest;
 import com.fushuhealth.recovery.device.model.request.MyDeptRequest;
@@ -56,7 +56,7 @@ public class SysDeptServiceImpl implements ISysDeptService {
         Page<SysDeptResponse> sysDeptPage = sysDeptMapper.selectJoinPage(page, SysDeptResponse.class, lambdaQueryWrapper);
         List<SysDeptResponse> responses = new ArrayList<>();
         sysDeptPage.getRecords().forEach((sysDept)->{
-            if (sysDept.getParentId()!=0){
+            if (sysDept.getParentId()!=0&&!Objects.equals(sysDept.getDeptId(), SecurityUtils.getLoginUser().getDeptId())){
                 SysDeptResponse sysDeptResponse = BeanUtil.copyProperties(sysDept, SysDeptResponse.class);
                 String parentDeptName = Optional.ofNullable(sysDeptMapper.selectById(sysDept.getParentId()))
                         .orElseThrow(() -> new ServiceException("没有对应的父机构")).getDeptName();
@@ -220,5 +220,20 @@ public class SysDeptServiceImpl implements ISysDeptService {
     @Override
     public Long selectDeptLevelByDeptId(Long deptId) {
         return Optional.ofNullable(sysDeptMapper.selectById(deptId)).orElseThrow(() -> new ServiceException("数据异常，没有对应的机构数据")).getInstitutionLevel();
+    }
+
+    @Override
+    public ReportType getReportType(long id) {
+        SysDept organization = sysDeptMapper.selectById(id);
+        if (organization == null) {
+            return ReportType.SIMPLE;
+        }
+        //todo:默认为简约版吧
+//        ReportType reportType = ReportType.getReportType(organization.getReportType());
+//        if (reportType == ReportType.UNKNOWN) {
+//            reportType = ReportType.SIMPLE;
+//        }
+        ReportType reportType = ReportType.SIMPLE;
+        return reportType;
     }
 }

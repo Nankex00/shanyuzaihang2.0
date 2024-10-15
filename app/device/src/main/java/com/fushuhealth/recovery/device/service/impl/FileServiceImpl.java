@@ -2,15 +2,23 @@ package com.fushuhealth.recovery.device.service.impl;
 
 import cn.hutool.http.HttpUtil;
 import com.fushuhealth.recovery.common.api.ResultCode;
+import com.fushuhealth.recovery.common.constant.BaseStatus;
+import com.fushuhealth.recovery.common.constant.UploadType;
 import com.fushuhealth.recovery.common.exception.OldServiceException;
+import com.fushuhealth.recovery.common.exception.ServiceException;
 import com.fushuhealth.recovery.common.storage.FileStorage;
-import com.fushuhealth.recovery.common.storage.FileType;
 import com.fushuhealth.recovery.common.storage.OldFileType;
 import com.fushuhealth.recovery.common.storage.TempFileStorage;
+import com.fushuhealth.recovery.common.util.DateUtil;
+import com.fushuhealth.recovery.common.util.StringUtil;
 import com.fushuhealth.recovery.dal.dao.FilesDao;
+import com.fushuhealth.recovery.dal.dto.FileDetailDto;
+import com.fushuhealth.recovery.dal.dto.FileDto;
 import com.fushuhealth.recovery.dal.entity.Files;
 import com.fushuhealth.recovery.dal.vo.UploadFileTokenVo;
 import com.fushuhealth.recovery.device.service.FileService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -138,5 +149,46 @@ public class FileServiceImpl implements FileService {
 
         fileStorage.convertToM3u8(type.getName(), rotatePath);
         return getFileUrl(file.getId(), false);
+    }
+
+    @Override
+    public List<String> operateFile(String orgIds, List<FileDto> fileDtoList) {
+        List<String> ids = new ArrayList<>();
+        if (!StringUtils.isBlank(orgIds)){
+            orgIds = orgIds.substring(1,(orgIds.length()-1));
+            ids = Arrays.stream(orgIds.split(", ")).toList();
+        }
+        List<String> finalIds = new ArrayList<>(ids);
+        if (CollectionUtils.isEmpty(fileDtoList)){
+            return finalIds;
+        }else {
+            fileDtoList.forEach(org->{
+                if (org.getCommendType().equals(UploadType.ADD.getType())){
+                    String fileName = FilenameUtils.getName(org.getKey());
+                    Files files = new Files();
+                    files.setStatus(BaseStatus.NORMAL.getStatus());
+                    files.setRawName(fileName);
+                    files.setOriginalName(fileName);
+                    files.setFileType(OldFileType.getType(org.getBucket()).getCode());
+                    files.setCreated(DateUtil.getCurrentTimeStamp());
+                    files.setFileSize(org.getSize());
+                    files.setFilePath(org.getKey());
+                    files.setExtension(FilenameUtils.getExtension(fileName));
+                    files.setUpdated(DateUtil.getCurrentTimeStamp());
+                    insertFiles(files);
+                    //插入新的fileId
+                    finalIds.add(String.valueOf(files.getId()));
+                    System.out.println(finalIds);
+                }else if (org.getCommendType().equals(UploadType.DETELE.getType())){
+                    //不做删除的处理
+                    //删除fileId
+                    finalIds.remove(String.valueOf(org.getId()));
+                }else {
+                    throw new ServiceException("参数异常，不存在对应的类型");
+                }
+            });
+            return finalIds;
+        }
+
     }
 }

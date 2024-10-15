@@ -1,5 +1,6 @@
 package com.fushuhealth.recovery.device.model.request;
 
+import com.fushuhealth.recovery.dal.dto.FileDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Data;
 //import javax.validation.constraints.NotEmpty;
 //import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Zhuanz
@@ -22,10 +24,10 @@ public class EvaluateRecordRequest {
     private Byte monthAge;
     @NotBlank(message = "geSell结果不能为空")
     private String geSellResult;
-    private String geSellUrls;
+    private List<FileDto> geSellUrls;
     @NotBlank(message = "s-s结果不能为空")
     private String sSResult;
-    private String sSUrls;
+    private List<FileDto> sSUrls;
     private String otherResult;
-    private String otherUrls;
+    private List<FileDto> otherUrls;
 }

@@ -48,13 +48,28 @@ token:
 
 file:
   domain: http://${host.ip}:${host.port}/data/syzh/backend/static/image/
+#
+#action:
+#  attribute: /data/syzh/backend/json/action.json
+#scale-table:
+#  file: /data/syzh/backend/json/scaleTable.json
+#  result:
+#    cerebralPalsyPath: /data/syzh/backend/json/result.json
+#  video-mark-param: /data/syzh/backend/json/videoMarkParam.json
+#  actionVideoFilePath: /data/syzh/backend/json/video.json
+#  abnormalMethodFilePath: /data/syzh/backend/json/abnormalIterm.json
+#  trainMethodFilePath: /data/syzh/backend/json/train.json
+action:
+  attribute: /Users/Zhuanz/fushujiankang2.0/json/action.json
 
 scale-table:
-  file: /data/syzh/backend/json/scaleTable.json
+  file: /Users/Zhuanz/fushujiankang2.0/json/scaleTable.json
   result:
-    cerebralPalsyPath: /data/syzh/backend/json/result.json
-  video-mark-param: /data/syzh/backend/json/videoMarkParam.json
-  actionVideoFilePath: /data/syzh/backend/json/video.json
+    cerebralPalsyPath: /Users/Zhuanz/fushujiankang2.0/json/result.json
+  video-mark-param: /Users/Zhuanz/fushujiankang2.0/json/videoMarkParam.json
+  actionVideoFilePath: /Users/Zhuanz/fushujiankang2.0/json/video.json
+  abnormalMethodFilePath: /Users/Zhuanz/fushujiankang2.0/json/abnormalIterm.json
+  trainMethodFilePath: /Users/Zhuanz/fushujiankang2.0/json/train.json
 
 storage:
   mode: cloud
